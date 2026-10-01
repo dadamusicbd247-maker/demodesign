@@ -74,14 +74,13 @@ function initSettingSubTabs() {
 function initGatewayManager() {
   const defaultGatewayStatus = {
     'manual-pay': true,
-    'chainis': true,
     'sorolpay': true,
     'crypto-pay': true
   };
 
   const storedStatus = JSON.parse(localStorage.getItem('admin_gateways_status')) || defaultGatewayStatus;
 
-  const gatewayIds = ['manual-pay', 'chainis', 'sorolpay', 'crypto-pay'];
+  const gatewayIds = ['manual-pay', 'sorolpay', 'crypto-pay'];
 
   function applyGatewayUI(id, isEnabled) {
     const checkbox = document.getElementById(`switch-${id}`);
@@ -519,7 +518,7 @@ function initWithdrawHandler() {
 }
 
 // --- Wallet Filter Bar State & Logic ---
-let currentGatewayFilter = 'all'; // 'all', 'Manual Pay', 'Chainis', 'Sorolpay'
+let currentGatewayFilter = 'Manual Pay'; // 'Manual Pay', 'Sorolpay'
 let currentSearchQuery = '';
 
 function matchesGateway(ch, gateway) {
@@ -557,26 +556,18 @@ function renderWalletTable() {
   if (!walletListBody) return;
 
   // Update Gateway Count Badges
-  const countAll = channelsData.length;
   const countManual = channelsData.filter(c => matchesGateway(c, 'Manual Pay')).length;
-  const countChainis = channelsData.filter(c => matchesGateway(c, 'Chainis')).length;
   const countSorolpay = channelsData.filter(c => matchesGateway(c, 'Sorolpay')).length;
 
-  const elAll = document.getElementById('count-all');
   const elManual = document.getElementById('count-manual-pay');
-  const elChainis = document.getElementById('count-chainis');
   const elSorolpay = document.getElementById('count-sorolpay');
 
-  if (elAll) elAll.textContent = countAll;
   if (elManual) elManual.textContent = countManual;
-  if (elChainis) elChainis.textContent = countChainis;
   if (elSorolpay) elSorolpay.textContent = countSorolpay;
 
   // Filter channels according to active gateway option and search term
-  let filtered = channelsData;
-  if (currentGatewayFilter !== 'all') {
-    filtered = filtered.filter(c => matchesGateway(c, currentGatewayFilter));
-  }
+  let filtered = channelsData.filter(c => matchesGateway(c, currentGatewayFilter));
+
   if (currentSearchQuery) {
     const q = currentSearchQuery.toLowerCase();
     filtered = filtered.filter(c => 

@@ -173,7 +173,6 @@
                         <div class="select-wrapper">
                           <select id="gatewaySelect" name="gatewaySelect" class="form-control form-select">
                             <option value="Manual Pay">Manual Pay</option>
-                            <option value="Chainis">Chainis</option>
                             <option value="Sorolpay">Sorolpay</option>
                           </select>
                           <svg class="select-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
@@ -277,22 +276,13 @@
                   <button class="btn-primary-sm" onclick="switchTab('add-channel')">+ Create Channel</button>
                 </div>
 
-                <!-- 3 Gateway Filter Options (Manual Pay, Chainis, Sorolpay) + Search -->
+                <!-- Gateway Filter Options (Manual Pay, Sorolpay) + Search -->
                 <div class="wallet-filter-container">
                   <div class="wallet-gateway-filter-bar" id="walletGatewayFilterBar">
-                    <button type="button" class="gateway-filter-btn active" data-filter="all">
-                      <span>All Gateways</span>
-                      <span class="filter-count-badge" id="count-all">0</span>
-                    </button>
-                    <button type="button" class="gateway-filter-btn" data-filter="Manual Pay">
+                    <button type="button" class="gateway-filter-btn active" data-filter="Manual Pay">
                       <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="5" y="2" width="14" height="20" rx="2"></rect><line x1="12" y1="18" x2="12.01" y2="18"></line></svg>
                       <span>Manual Pay</span>
                       <span class="filter-count-badge" id="count-manual-pay">0</span>
-                    </button>
-                    <button type="button" class="gateway-filter-btn" data-filter="Chainis">
-                      <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 14 14"></polyline></svg>
-                      <span>Chainis</span>
-                      <span class="filter-count-badge" id="count-chainis">0</span>
                     </button>
                     <button type="button" class="gateway-filter-btn" data-filter="Sorolpay">
                       <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
@@ -388,7 +378,6 @@
                           <div class="select-wrapper">
                             <select id="depositGatewaySelect" name="depositGatewaySelect" class="form-control form-select">
                               <option value="Manual Pay">Manual Pay</option>
-                              <option value="Chainis">Chainis</option>
                               <option value="Sorolpay">Sorolpay</option>
                             </select>
                             <svg class="select-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
@@ -672,34 +661,7 @@
                       </div>
                     </div>
 
-                    <!-- Gateway 2: Chainis -->
-                    <div class="gateway-manage-card" id="card-gateway-chainis">
-                      <div class="gateway-card-left">
-                        <div class="gateway-icon-badge" style="background: #fef2f2; color: #ef4444;">
-                          <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2">
-                            <circle cx="12" cy="12" r="10"></circle>
-                            <polyline points="12 6 12 12 14 14"></polyline>
-                          </svg>
-                        </div>
-                        <div class="gateway-details">
-                          <div class="gateway-title-row">
-                            <span class="gateway-title">Chainis</span>
-                            <span class="gateway-badge active" id="badge-chainis">ACTIVE</span>
-                          </div>
-                          <span class="gateway-subtitle">Fast Automated Chainis API Gateway</span>
-                        </div>
-                      </div>
-                      
-                      <div class="gateway-card-right">
-                        <span class="gateway-toggle-text active" id="text-chainis">ON</span>
-                        <label class="gateway-switch">
-                          <input type="checkbox" id="switch-chainis" checked data-gateway-id="chainis" data-gateway-name="Chainis">
-                          <span class="gateway-slider"></span>
-                        </label>
-                      </div>
-                    </div>
-
-                    <!-- Gateway 3: Sorolpay -->
+                    <!-- Gateway 2: Sorolpay -->
                     <div class="gateway-manage-card" id="card-gateway-sorolpay">
                       <div class="gateway-card-left">
                         <div class="gateway-icon-badge" style="background: #fdf4ff; color: #c026d3;">

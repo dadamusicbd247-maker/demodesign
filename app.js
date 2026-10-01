@@ -27,6 +27,7 @@ const walletListBody = document.getElementById('walletListBody');
 // --- Initialization ---
 document.addEventListener('DOMContentLoaded', () => {
   initSubTabs();
+  initWalletFilterBar();
   renderWalletTable();
   initAddChannelForm();
   initSettingSubTabs();
@@ -73,13 +74,14 @@ function initSettingSubTabs() {
 function initGatewayManager() {
   const defaultGatewayStatus = {
     'manual-pay': true,
+    'chainis': true,
     'sorolpay': true,
     'crypto-pay': true
   };
 
   const storedStatus = JSON.parse(localStorage.getItem('admin_gateways_status')) || defaultGatewayStatus;
 
-  const gatewayIds = ['manual-pay', 'sorolpay', 'crypto-pay'];
+  const gatewayIds = ['manual-pay', 'chainis', 'sorolpay', 'crypto-pay'];
 
   function applyGatewayUI(id, isEnabled) {
     const checkbox = document.getElementById(`switch-${id}`);
@@ -516,16 +518,87 @@ function initWithdrawHandler() {
   });
 }
 
+// --- Wallet Filter Bar State & Logic ---
+let currentGatewayFilter = 'all'; // 'all', 'Manual Pay', 'Chainis', 'Sorolpay'
+let currentSearchQuery = '';
+
+function matchesGateway(ch, gateway) {
+  if (!ch) return false;
+  const target = gateway.toLowerCase();
+  const holder = (ch.holder || '').toLowerCase();
+  const type = (ch.type || '').toLowerCase();
+  return holder === target || type.includes(target);
+}
+
+function initWalletFilterBar() {
+  const filterBtns = document.querySelectorAll('.gateway-filter-btn');
+  const searchInput = document.getElementById('walletSearchInput');
+
+  filterBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const filter = btn.getAttribute('data-filter');
+      currentGatewayFilter = filter;
+      filterBtns.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      renderWalletTable();
+    });
+  });
+
+  if (searchInput) {
+    searchInput.addEventListener('input', (e) => {
+      currentSearchQuery = e.target.value.trim().toLowerCase();
+      renderWalletTable();
+    });
+  }
+}
+
 // --- Render Wallet Table ---
 function renderWalletTable() {
   if (!walletListBody) return;
+
+  // Update Gateway Count Badges
+  const countAll = channelsData.length;
+  const countManual = channelsData.filter(c => matchesGateway(c, 'Manual Pay')).length;
+  const countChainis = channelsData.filter(c => matchesGateway(c, 'Chainis')).length;
+  const countSorolpay = channelsData.filter(c => matchesGateway(c, 'Sorolpay')).length;
+
+  const elAll = document.getElementById('count-all');
+  const elManual = document.getElementById('count-manual-pay');
+  const elChainis = document.getElementById('count-chainis');
+  const elSorolpay = document.getElementById('count-sorolpay');
+
+  if (elAll) elAll.textContent = countAll;
+  if (elManual) elManual.textContent = countManual;
+  if (elChainis) elChainis.textContent = countChainis;
+  if (elSorolpay) elSorolpay.textContent = countSorolpay;
+
+  // Filter channels according to active gateway option and search term
+  let filtered = channelsData;
+  if (currentGatewayFilter !== 'all') {
+    filtered = filtered.filter(c => matchesGateway(c, currentGatewayFilter));
+  }
+  if (currentSearchQuery) {
+    const q = currentSearchQuery.toLowerCase();
+    filtered = filtered.filter(c => 
+      (c.name && c.name.toLowerCase().includes(q)) ||
+      (c.wallet && c.wallet.toLowerCase().includes(q)) ||
+      (c.type && c.type.toLowerCase().includes(q)) ||
+      (c.holder && c.holder.toLowerCase().includes(q))
+    );
+  }
 
   if (channelsData.length === 0) {
     walletListBody.innerHTML = `<tr><td colspan="7" style="text-align:center; padding: 36px 20px; color: var(--text-muted); font-size: 13.5px;"><svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="#94a3b8" stroke-width="1.8" style="margin-bottom: 8px; display: block; margin-left: auto; margin-right: auto;"><circle cx="12" cy="12" r="10"></circle><line x1="8" y1="12" x2="16" y2="12"></line></svg>কোনো চ্যানেল পাওয়া যায়নি। আপনি নতুন চ্যানেল যোগ করতে পারেন।</td></tr>`;
     return;
   }
 
-  walletListBody.innerHTML = channelsData.map(ch => {
+  if (filtered.length === 0) {
+    const filterText = currentGatewayFilter === 'all' ? '' : ` "${currentGatewayFilter}"`;
+    walletListBody.innerHTML = `<tr><td colspan="7" style="text-align:center; padding: 36px 20px; color: var(--text-muted); font-size: 13.5px;"><svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="#94a3b8" stroke-width="1.8" style="margin-bottom: 8px; display: block; margin-left: auto; margin-right: auto;"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>${filterText} গেটওয়ে বা সার্চ ফিল্টারে কোনো চ্যানেল পাওয়া যায়নি।</td></tr>`;
+    return;
+  }
+
+  walletListBody.innerHTML = filtered.map(ch => {
     const initials = ch.name.substring(0, 2).toUpperCase();
     return `
       <tr>
@@ -542,7 +615,16 @@ function renderWalletTable() {
         <td><code>${ch.wallet}</code></td>
         <td><span style="font-weight:600;">${ch.currency}</span></td>
         <td>Min: ${ch.min} / Max: ${ch.max}</td>
-        <td><span class="badge-active">${ch.status}</span></td>
+        <td>
+          <select 
+            class="table-status-select ${ch.status === 'Active' ? 'is-active' : 'is-deactive'}" 
+            onchange="updateChannelStatus(${ch.id}, this.value)"
+          >
+            <option value="Active" ${ch.status === 'Active' ? 'selected' : ''}>Active</option>
+            <option value="Deactive" ${ch.status === 'Deactive' ? 'selected' : ''}>Deactive</option>
+            <option value="delete" style="color: #ef4444; font-weight: 600;">Delete</option>
+          </select>
+        </td>
         <td>
           <button class="action-btn-delete" onclick="deleteChannel(${ch.id})">Delete</button>
         </td>
@@ -551,13 +633,32 @@ function renderWalletTable() {
   }).join('');
 }
 
+// --- Update Channel Status (Active / Deactive / Delete) ---
+window.updateChannelStatus = function(id, newStatus) {
+  if (newStatus === 'delete') {
+    deleteChannel(id);
+    return;
+  }
+  const channel = channelsData.find(c => c.id === id);
+  if (channel) {
+    channel.status = newStatus;
+    localStorage.setItem('admin_wallet_channels', JSON.stringify(channelsData));
+    renderWalletTable();
+    showToast(`Channel "${channel.name}" is now ${newStatus}!`, newStatus === 'Active' ? 'success' : 'info');
+  }
+};
+
 // --- Delete Channel ---
 window.deleteChannel = function(id) {
-  if (confirm('Are you sure you want to remove this payment channel?')) {
+  const channel = channelsData.find(c => c.id === id);
+  const name = channel ? channel.name : 'this channel';
+  if (confirm(`Are you sure you want to remove ${name}?`)) {
     channelsData = channelsData.filter(c => c.id !== id);
     localStorage.setItem('admin_wallet_channels', JSON.stringify(channelsData));
     renderWalletTable();
-    showToast('Channel removed', 'info');
+    showToast(`Channel "${name}" removed`, 'info');
+  } else {
+    renderWalletTable();
   }
 };
 

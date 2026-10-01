@@ -1043,7 +1043,76 @@ body.dark-mode .theme-toggle-btn {
   width: 140px;
 }
 
-/* Badges */
+/* Badges & Status */
+.channel-status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.2px;
+}
+
+.channel-status-badge.is-active {
+  background-color: #dcfce7;
+  color: #15803d;
+  border: 1px solid #86efac;
+}
+
+.channel-status-badge.is-active .status-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background-color: #16a34a;
+  box-shadow: 0 0 0 2px rgba(22, 163, 74, 0.2);
+}
+
+.channel-status-badge.is-deactive {
+  background-color: #fef2f2;
+  color: #b91c1c;
+  border: 1px solid #fca5a5;
+}
+
+.channel-status-badge.is-deactive .status-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background-color: #ef4444;
+  box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.2);
+}
+
+.action-controls-wrap {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.table-action-select {
+  padding: 5px 10px;
+  font-size: 12px;
+  font-weight: 600;
+  border-radius: 6px;
+  border: 1.5px solid #cbd5e1;
+  background-color: #ffffff;
+  color: #334155;
+  cursor: pointer;
+  outline: none;
+  font-family: inherit;
+  transition: all 0.15s ease;
+}
+
+.table-action-select:hover {
+  border-color: #94a3b8;
+  background-color: #f8fafc;
+}
+
+.table-action-select:focus {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 2.5px rgba(37, 99, 235, 0.15);
+}
+
 .table-status-select {
   padding: 5px 12px;
   font-size: 12px;

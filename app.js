@@ -622,37 +622,46 @@ function renderWalletTable() {
         <td><span style="font-weight:600;">${ch.currency}</span></td>
         <td>Min: ${ch.min} / Max: ${ch.max}</td>
         <td>
-          <select 
-            class="table-status-select ${ch.status === 'Active' ? 'is-active' : 'is-deactive'}" 
-            onchange="updateChannelStatus(${ch.id}, this.value)"
-          >
-            <option value="Active" ${ch.status === 'Active' ? 'selected' : ''}>Active</option>
-            <option value="Deactive" ${ch.status === 'Deactive' ? 'selected' : ''}>Deactive</option>
-            <option value="delete" style="color: #ef4444; font-weight: 600;">Delete</option>
-          </select>
+          <span class="channel-status-badge ${ch.status === 'Active' ? 'is-active' : 'is-deactive'}">
+            <span class="status-dot"></span>
+            ${ch.status}
+          </span>
         </td>
         <td>
-          <button class="action-btn-delete" onclick="deleteChannel(${ch.id})">Delete</button>
+          <div class="action-controls-wrap">
+            <select 
+              class="table-action-select" 
+              onchange="handleChannelAction(${ch.id}, this.value)"
+              title="Select action"
+            >
+              <option value="" disabled selected>Action ▾</option>
+              <option value="Active" ${ch.status === 'Active' ? 'disabled' : ''}>Active</option>
+              <option value="Deactive" ${ch.status === 'Deactive' ? 'disabled' : ''}>Deactive</option>
+              <option value="delete" style="color: #ef4444; font-weight: 600;">Delete</option>
+            </select>
+            <button class="action-btn-delete" onclick="deleteChannel(${ch.id})" title="Delete">Delete</button>
+          </div>
         </td>
       </tr>
     `;
   }).join('');
 }
 
-// --- Update Channel Status (Active / Deactive / Delete) ---
-window.updateChannelStatus = function(id, newStatus) {
-  if (newStatus === 'delete') {
+// --- Action Column Handler (Active / Deactive / Delete) ---
+window.handleChannelAction = function(id, action) {
+  if (action === 'delete') {
     deleteChannel(id);
     return;
   }
   const channel = channelsData.find(c => c.id === id);
   if (channel) {
-    channel.status = newStatus;
+    channel.status = action;
     localStorage.setItem('admin_wallet_channels', JSON.stringify(channelsData));
     renderWalletTable();
-    showToast(`Channel "${channel.name}" is now ${newStatus}!`, newStatus === 'Active' ? 'success' : 'info');
+    showToast(`Channel "${channel.name}" is now ${action}!`, action === 'Active' ? 'success' : 'info');
   }
 };
+window.updateChannelStatus = window.handleChannelAction;
 
 // --- Delete Channel ---
 window.deleteChannel = function(id) {

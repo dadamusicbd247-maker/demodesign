@@ -75,12 +75,13 @@ function initGatewayManager() {
   const defaultGatewayStatus = {
     'manual-pay': true,
     'sorolpay': true,
+    'chainis-pay': true,
     'crypto-pay': true
   };
 
   const storedStatus = JSON.parse(localStorage.getItem('admin_gateways_status')) || defaultGatewayStatus;
 
-  const gatewayIds = ['manual-pay', 'sorolpay', 'crypto-pay'];
+  const gatewayIds = ['manual-pay', 'sorolpay', 'chainis-pay', 'crypto-pay'];
 
   function applyGatewayUI(id, isEnabled) {
     const checkbox = document.getElementById(`switch-${id}`);
@@ -522,6 +523,8 @@ function initWithdrawHandler() {
 let currentGatewayFilter = 'all'; // 'all', 'Manual Pay', 'Sorolpay', 'Crypto'
 let currentChannelFilter = 'all'; // 'all', 'Cashout', 'Send Many', 'Payment'
 let currentStatusFilter = 'all';  // 'all', 'Active', 'Deactive'
+let pendingStatusFilter = 'all';  // Changes inside popover before clicking Apply
+let pendingChannelFilter = 'all'; // Changes inside popover before clicking Apply
 let currentSearchQuery = '';
 
 function matchesGateway(ch, gateway) {
@@ -553,81 +556,117 @@ function matchesChannel(ch, channelType) {
   return directChannel.includes(target) || name.includes(target) || type.includes(target);
 }
 
+// Sync active visual state of popover buttons with current pending values
+function syncPopoverVisuals() {
+  const statusBtns = document.querySelectorAll('#popoverStatusGrid .popover-opt-btn');
+  const channelBtns = document.querySelectorAll('#popoverChannelGrid .popover-opt-btn');
+
+  statusBtns.forEach(btn => {
+    btn.classList.toggle('active', btn.getAttribute('data-status') === pendingStatusFilter);
+  });
+
+  channelBtns.forEach(btn => {
+    btn.classList.toggle('active', btn.getAttribute('data-channel') === pendingChannelFilter);
+  });
+}
+
 function initWalletFilterBar() {
   const filterBtns = document.querySelectorAll('.gateway-filter-btn');
-  const channelFilterBtns = document.querySelectorAll('#filterChannelOptions .filter-pill-opt');
-  const statusFilterBtns = document.querySelectorAll('#filterStatusOptions .filter-pill-opt');
+  const btnFilterPopover = document.getElementById('btnFilterPopover');
+  const filterPopoverCard = document.getElementById('filterPopoverCard');
+  const btnPopoverReset = document.getElementById('btnPopoverReset');
+  const btnPopoverCancel = document.getElementById('btnPopoverCancel');
+  const btnPopoverApply = document.getElementById('btnPopoverApply');
+  const statusBtns = document.querySelectorAll('#popoverStatusGrid .popover-opt-btn');
+  const channelBtns = document.querySelectorAll('#popoverChannelGrid .popover-opt-btn');
   const searchInput = document.getElementById('walletSearchInput');
-  const btnFilterToggle = document.getElementById('btnFilterToggle');
-  const filterDropdownCard = document.getElementById('filterDropdownCard');
-  const btnFilterReset = document.getElementById('btnFilterReset');
 
-  // Toggle filter dropdown card from Filter Icon button
-  if (btnFilterToggle && filterDropdownCard) {
-    btnFilterToggle.addEventListener('click', (e) => {
+  // Toggle Popover Card
+  if (btnFilterPopover && filterPopoverCard) {
+    btnFilterPopover.addEventListener('click', (e) => {
       e.stopPropagation();
-      filterDropdownCard.classList.toggle('show');
-      btnFilterToggle.classList.toggle('is-active', filterDropdownCard.classList.contains('show'));
-    });
-
-    // Close popover when clicking anywhere outside
-    document.addEventListener('click', (e) => {
-      if (!e.target.closest('#filterMenuWrapper')) {
-        filterDropdownCard.classList.remove('show');
-        if (btnFilterToggle) btnFilterToggle.classList.remove('is-active');
+      const isOpen = filterPopoverCard.classList.contains('show');
+      if (!isOpen) {
+        // When opening, initialize pending values to current applied values
+        pendingStatusFilter = currentStatusFilter;
+        pendingChannelFilter = currentChannelFilter;
+        syncPopoverVisuals();
+        filterPopoverCard.classList.add('show');
+        btnFilterPopover.classList.add('is-active');
+      } else {
+        filterPopoverCard.classList.remove('show');
+        btnFilterPopover.classList.remove('is-active');
       }
     });
 
-    filterDropdownCard.addEventListener('click', (e) => {
+    // Close when clicking outside
+    document.addEventListener('click', (e) => {
+      if (!e.target.closest('#filterPopoverWrapper')) {
+        filterPopoverCard.classList.remove('show');
+        btnFilterPopover.classList.remove('is-active');
+      }
+    });
+
+    filterPopoverCard.addEventListener('click', (e) => {
       e.stopPropagation();
     });
   }
 
-  // Reset button inside Filter Popover
-  if (btnFilterReset) {
-    btnFilterReset.addEventListener('click', () => {
-      currentStatusFilter = 'all';
-      currentChannelFilter = 'all';
-      statusFilterBtns.forEach(b => b.classList.toggle('active', b.getAttribute('data-status-filter') === 'all'));
-      channelFilterBtns.forEach(b => b.classList.toggle('active', b.getAttribute('data-channel-filter') === 'all'));
-      renderWalletTable();
-      showToast('Filters reset', 'info');
+  // Select Status (Only updates pending state, NOT the table yet!)
+  statusBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      pendingStatusFilter = btn.getAttribute('data-status');
+      syncPopoverVisuals();
+    });
+  });
+
+  // Select Channel (Only updates pending state, NOT the table yet!)
+  channelBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      pendingChannelFilter = btn.getAttribute('data-channel');
+      syncPopoverVisuals();
+    });
+  });
+
+  // Reset inside Popover (Clears pending to 'all')
+  if (btnPopoverReset) {
+    btnPopoverReset.addEventListener('click', () => {
+      pendingStatusFilter = 'all';
+      pendingChannelFilter = 'all';
+      syncPopoverVisuals();
     });
   }
 
-  // Gateway filter buttons
-  filterBtns.forEach(btn => {
-    btn.addEventListener('click', () => {
-      const filter = btn.getAttribute('data-filter');
-      currentGatewayFilter = filter;
-      filterBtns.forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
+  // Cancel inside Popover
+  if (btnPopoverCancel) {
+    btnPopoverCancel.addEventListener('click', () => {
+      if (filterPopoverCard) filterPopoverCard.classList.remove('show');
+      if (btnFilterPopover) btnFilterPopover.classList.remove('is-active');
+    });
+  }
+
+  // APPLY BUTTON: Only now apply the filters to the table!
+  if (btnPopoverApply) {
+    btnPopoverApply.addEventListener('click', () => {
+      currentStatusFilter = pendingStatusFilter;
+      currentChannelFilter = pendingChannelFilter;
+      if (filterPopoverCard) filterPopoverCard.classList.remove('show');
+      if (btnFilterPopover) btnFilterPopover.classList.remove('is-active');
+      renderWalletTable();
+      showToast('Filter applied successfully', 'success');
+    });
+  }
+
+  // Gateway filter dropdown change
+  const gatewaySelect = document.getElementById('gatewayDropdownSelect');
+  if (gatewaySelect) {
+    gatewaySelect.addEventListener('change', (e) => {
+      currentGatewayFilter = e.target.value;
       renderWalletTable();
     });
-  });
+  }
 
-  // Channel filter buttons (inside popover: Cashout, Send Money, Payment)
-  channelFilterBtns.forEach(btn => {
-    btn.addEventListener('click', () => {
-      const filter = btn.getAttribute('data-channel-filter');
-      currentChannelFilter = filter;
-      channelFilterBtns.forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      renderWalletTable();
-    });
-  });
-
-  // Status filter buttons (inside popover: All, Active, Deactive)
-  statusFilterBtns.forEach(btn => {
-    btn.addEventListener('click', () => {
-      const filter = btn.getAttribute('data-status-filter');
-      currentStatusFilter = filter;
-      statusFilterBtns.forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      renderWalletTable();
-    });
-  });
-
+  // Search input
   if (searchInput) {
     searchInput.addEventListener('input', (e) => {
       currentSearchQuery = e.target.value.trim().toLowerCase();
@@ -640,73 +679,48 @@ function initWalletFilterBar() {
 function renderWalletTable() {
   if (!walletListBody) return;
 
-  // Update Gateway Count Badges
+  // Update Gateway Dropdown Option Live Counts
   const countAll = channelsData.length;
   const countManual = channelsData.filter(c => matchesGateway(c, 'Manual Pay')).length;
   const countSorolpay = channelsData.filter(c => matchesGateway(c, 'Sorolpay')).length;
   const countCrypto = channelsData.filter(c => matchesGateway(c, 'Crypto')).length;
 
-  const elAll = document.getElementById('count-all');
-  const elManual = document.getElementById('count-manual-pay');
-  const elSorolpay = document.getElementById('count-sorolpay');
-  const elCrypto = document.getElementById('count-crypto');
+  const gatewaySelect = document.getElementById('gatewayDropdownSelect');
+  const gatewayWrapper = document.getElementById('gatewaySelectWrapper');
+  if (gatewaySelect) {
+    const optAll = gatewaySelect.querySelector('option[value="all"]');
+    const optManual = gatewaySelect.querySelector('option[value="Manual Pay"]');
+    const optSorolpay = gatewaySelect.querySelector('option[value="Sorolpay"]');
+    const optCrypto = gatewaySelect.querySelector('option[value="Crypto"]');
 
-  if (elAll) elAll.textContent = countAll;
-  if (elManual) elManual.textContent = countManual;
-  if (elSorolpay) elSorolpay.textContent = countSorolpay;
-  if (elCrypto) elCrypto.textContent = countCrypto;
+    if (optAll) optAll.textContent = `All (${countAll})`;
+    if (optManual) optManual.textContent = `Manual Pay (${countManual})`;
+    if (optSorolpay) optSorolpay.textContent = `Sorolpay (${countSorolpay})`;
+    if (optCrypto) optCrypto.textContent = `Crypto (${countCrypto})`;
 
-  // Update Channel Count Badges (All, Cashout, Send Money, Payment)
-  const countChAll = channelsData.length;
-  const countCashout = channelsData.filter(c => matchesChannel(c, 'Cashout')).length;
-  const countSendMoney = channelsData.filter(c => matchesChannel(c, 'Send Many')).length;
-  const countPayment = channelsData.filter(c => matchesChannel(c, 'Payment')).length;
-
-  const elChAll = document.getElementById('count-channel-all');
-  const elChCashout = document.getElementById('count-channel-cashout');
-  const elChSendMoney = document.getElementById('count-channel-sendmoney');
-  const elChPayment = document.getElementById('count-channel-payment');
-
-  if (elChAll) elChAll.textContent = countChAll;
-  if (elChCashout) elChCashout.textContent = countCashout;
-  if (elChSendMoney) elChSendMoney.textContent = countSendMoney;
-  if (elChPayment) elChPayment.textContent = countPayment;
-
-  // Update Status Count Badges (All Status, Active, Deactive)
-  const countStatusAll = channelsData.length;
-  const countStatusActive = channelsData.filter(c => c.status === 'Active').length;
-  const countStatusDeactive = channelsData.filter(c => c.status === 'Deactive').length;
-
-  const elStatusAll = document.getElementById('count-status-all');
-  const elStatusActive = document.getElementById('count-status-active');
-  const elStatusDeactive = document.getElementById('count-status-deactive');
-
-  if (elStatusAll) elStatusAll.textContent = countStatusAll;
-  if (elStatusActive) elStatusActive.textContent = countStatusActive;
-  if (elStatusDeactive) elStatusDeactive.textContent = countStatusDeactive;
-
-  // Update Filter Active Dot & Popover Summary
-  const hasActiveFilters = currentStatusFilter !== 'all' || currentChannelFilter !== 'all';
-  const filterActiveDot = document.getElementById('filterActiveDot');
-  const btnFilterToggleEl = document.getElementById('btnFilterToggle');
-  const filterActiveSummary = document.getElementById('filterActiveSummary');
-
-  if (filterActiveDot) {
-    filterActiveDot.style.display = hasActiveFilters ? 'inline-block' : 'none';
+    gatewaySelect.value = currentGatewayFilter;
   }
-  if (btnFilterToggleEl) {
-    btnFilterToggleEl.classList.toggle('has-active-filters', hasActiveFilters);
+  if (gatewayWrapper) {
+    gatewayWrapper.classList.toggle('is-filtered', currentGatewayFilter !== 'all');
   }
-  if (filterActiveSummary) {
-    const summaryParts = [];
-    if (currentStatusFilter !== 'all') summaryParts.push(`Status: ${currentStatusFilter}`);
-    if (currentChannelFilter !== 'all') {
-      const chName = currentChannelFilter === 'Send Many' ? 'Send Money' : currentChannelFilter;
-      summaryParts.push(`Channel: ${chName}`);
+
+  // Update Filter Button badge & state
+  const btnFilterPopover = document.getElementById('btnFilterPopover');
+  const filterAppliedBadge = document.getElementById('filterAppliedBadge');
+  let appliedCount = 0;
+  if (currentStatusFilter !== 'all') appliedCount++;
+  if (currentChannelFilter !== 'all') appliedCount++;
+
+  if (btnFilterPopover) {
+    btnFilterPopover.classList.toggle('has-filters', appliedCount > 0);
+  }
+  if (filterAppliedBadge) {
+    if (appliedCount > 0) {
+      filterAppliedBadge.style.display = 'inline-flex';
+      filterAppliedBadge.textContent = appliedCount;
+    } else {
+      filterAppliedBadge.style.display = 'none';
     }
-    filterActiveSummary.textContent = summaryParts.length > 0 
-      ? `Active: ${summaryParts.join(' • ')}` 
-      : 'Showing all channels';
   }
 
   // Filter channels according to active gateway, channel, status filter, and search term
@@ -733,18 +747,18 @@ function renderWalletTable() {
   }
 
   if (channelsData.length === 0) {
-    walletListBody.innerHTML = `<tr><td colspan="6" style="text-align:center; padding: 36px 20px; color: var(--text-muted); font-size: 13.5px;"><svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="#94a3b8" stroke-width="1.8" style="margin-bottom: 8px; display: block; margin-left: auto; margin-right: auto;"><circle cx="12" cy="12" r="10"></circle><line x1="8" y1="12" x2="16" y2="12"></line></svg>কোনো চ্যানেল পাওয়া যায়নি। আপনি নতুন চ্যানেল যোগ করতে পারেন।</td></tr>`;
+    walletListBody.innerHTML = `<tr><td colspan="6" style="text-align:center; padding: 36px 20px; color: var(--text-muted); font-size: 13.5px;"><svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="#94a3b8" stroke-width="1.8" style="margin-bottom: 8px; display: block; margin-left: auto; margin-right: auto;"><circle cx="12" cy="12" r="10"></circle><line x1="8" y1="12" x2="16" y2="12"></line></svg>No channels found. You can add a new channel.</td></tr>`;
     return;
   }
 
   if (filtered.length === 0) {
-    let msg = 'কোনো চ্যানেল পাওয়া যায়নি।';
+    let msg = 'No channels found.';
     if (currentStatusFilter === 'Deactive') {
-      msg = 'কোনো Deactive চ্যানেল নেই। সব চ্যানেল একটিভ রয়েছে।';
+      msg = 'No deactive channels found. All channels are active.';
     } else if (currentStatusFilter === 'Active') {
-      msg = 'কোনো Active চ্যানেল পাওয়া যায়নি।';
+      msg = 'No active channels found.';
     } else if (currentGatewayFilter !== 'all') {
-      msg = `"${currentGatewayFilter}" গেটওয়েতে কোনো চ্যানেল পাওয়া যায়নি।`;
+      msg = `No channels found for "${currentGatewayFilter}" gateway.`;
     }
     walletListBody.innerHTML = `<tr><td colspan="6" style="text-align:center; padding: 36px 20px; color: var(--text-muted); font-size: 13.5px;"><svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="#94a3b8" stroke-width="1.8" style="margin-bottom: 8px; display: block; margin-left: auto; margin-right: auto;"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>${msg}</td></tr>`;
     return;

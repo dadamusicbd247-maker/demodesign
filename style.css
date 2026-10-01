@@ -1089,6 +1089,19 @@ body.dark-mode .theme-toggle-btn {
   gap: 8px;
 }
 
+.gateway-tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 10px;
+  background-color: #f1f5f9;
+  color: #334155;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  border: 1px solid #e2e8f0;
+  letter-spacing: 0.2px;
+}
+
 .table-action-select {
   padding: 5px 10px;
   font-size: 12px;

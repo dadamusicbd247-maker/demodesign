@@ -594,13 +594,13 @@ function renderWalletTable() {
   }
 
   if (channelsData.length === 0) {
-    walletListBody.innerHTML = `<tr><td colspan="7" style="text-align:center; padding: 36px 20px; color: var(--text-muted); font-size: 13.5px;"><svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="#94a3b8" stroke-width="1.8" style="margin-bottom: 8px; display: block; margin-left: auto; margin-right: auto;"><circle cx="12" cy="12" r="10"></circle><line x1="8" y1="12" x2="16" y2="12"></line></svg>কোনো চ্যানেল পাওয়া যায়নি। আপনি নতুন চ্যানেল যোগ করতে পারেন।</td></tr>`;
+    walletListBody.innerHTML = `<tr><td colspan="6" style="text-align:center; padding: 36px 20px; color: var(--text-muted); font-size: 13.5px;"><svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="#94a3b8" stroke-width="1.8" style="margin-bottom: 8px; display: block; margin-left: auto; margin-right: auto;"><circle cx="12" cy="12" r="10"></circle><line x1="8" y1="12" x2="16" y2="12"></line></svg>কোনো চ্যানেল পাওয়া যায়নি। আপনি নতুন চ্যানেল যোগ করতে পারেন।</td></tr>`;
     return;
   }
 
   if (filtered.length === 0) {
     const filterText = currentGatewayFilter === 'all' ? '' : ` "${currentGatewayFilter}"`;
-    walletListBody.innerHTML = `<tr><td colspan="7" style="text-align:center; padding: 36px 20px; color: var(--text-muted); font-size: 13.5px;"><svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="#94a3b8" stroke-width="1.8" style="margin-bottom: 8px; display: block; margin-left: auto; margin-right: auto;"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>${filterText} গেটওয়ে বা সার্চ ফিল্টারে কোনো চ্যানেল পাওয়া যায়নি।</td></tr>`;
+    walletListBody.innerHTML = `<tr><td colspan="6" style="text-align:center; padding: 36px 20px; color: var(--text-muted); font-size: 13.5px;"><svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="#94a3b8" stroke-width="1.8" style="margin-bottom: 8px; display: block; margin-left: auto; margin-right: auto;"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>${filterText} গেটওয়ে বা সার্চ ফিল্টারে কোনো চ্যানেল পাওয়া যায়নি।</td></tr>`;
     return;
   }
 
@@ -609,18 +609,18 @@ function renderWalletTable() {
     return `
       <tr>
         <td>
+          <span class="gateway-tag">${ch.holder}</span>
+        </td>
+        <td>
           <div class="channel-pill-tag">
             <div class="channel-avatar">${initials}</div>
             <div>
-              <strong>${ch.name}</strong><br>
-              <small style="color:var(--text-muted);">${ch.holder}</small>
+              <strong>${ch.name}</strong>
             </div>
           </div>
         </td>
-        <td>${ch.type}</td>
         <td><code>${ch.wallet}</code></td>
         <td><span style="font-weight:600;">${ch.currency}</span></td>
-        <td>Min: ${ch.min} / Max: ${ch.max}</td>
         <td>
           <span class="channel-status-badge ${ch.status === 'Active' ? 'is-active' : 'is-deactive'}">
             <span class="status-dot"></span>

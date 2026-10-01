@@ -276,10 +276,14 @@
                   <button class="btn-primary-sm" onclick="switchTab('add-channel')">+ Create Channel</button>
                 </div>
 
-                <!-- Gateway Filter Options (Manual Pay, Sorolpay) + Search -->
+                <!-- Gateway Filter Options (All first, Manual Pay, Sorolpay, Crypto) + Search -->
                 <div class="wallet-filter-container">
                   <div class="wallet-gateway-filter-bar" id="walletGatewayFilterBar">
-                    <button type="button" class="gateway-filter-btn active" data-filter="Manual Pay">
+                    <button type="button" class="gateway-filter-btn active" data-filter="all">
+                      <span>All</span>
+                      <span class="filter-count-badge" id="count-all">0</span>
+                    </button>
+                    <button type="button" class="gateway-filter-btn" data-filter="Manual Pay">
                       <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="5" y="2" width="14" height="20" rx="2"></rect><line x1="12" y1="18" x2="12.01" y2="18"></line></svg>
                       <span>Manual Pay</span>
                       <span class="filter-count-badge" id="count-manual-pay">0</span>
@@ -288,6 +292,11 @@
                       <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
                       <span>Sorolpay</span>
                       <span class="filter-count-badge" id="count-sorolpay">0</span>
+                    </button>
+                    <button type="button" class="gateway-filter-btn" data-filter="Crypto">
+                      <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="9"></circle><path d="M9 8h4.5a2.5 2.5 0 0 1 0 5H9m0 0h5a2.5 2.5 0 0 1 0 5H9m0-10v10"></path></svg>
+                      <span>Crypto</span>
+                      <span class="filter-count-badge" id="count-crypto">0</span>
                     </button>
                   </div>
                   <div class="wallet-filter-search">

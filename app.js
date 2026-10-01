@@ -518,12 +518,19 @@ function initWithdrawHandler() {
 }
 
 // --- Wallet Filter Bar State & Logic ---
-let currentGatewayFilter = 'Manual Pay'; // 'Manual Pay', 'Sorolpay'
+let currentGatewayFilter = 'all'; // 'all', 'Manual Pay', 'Sorolpay', 'Crypto'
 let currentSearchQuery = '';
 
 function matchesGateway(ch, gateway) {
   if (!ch) return false;
   const target = gateway.toLowerCase();
+  if (target === 'all') return true;
+  if (target === 'crypto') {
+    return (ch.paymentType && ch.paymentType.toLowerCase() === 'crypto') ||
+           (ch.holder && ch.holder.toLowerCase().includes('crypto')) ||
+           (ch.type && ch.type.toLowerCase().includes('crypto')) ||
+           (ch.currency && (ch.currency.toLowerCase() === 'usdt' || ch.currency.toLowerCase() === 'crypto'));
+  }
   const holder = (ch.holder || '').toLowerCase();
   const type = (ch.type || '').toLowerCase();
   return holder === target || type.includes(target);
@@ -556,17 +563,25 @@ function renderWalletTable() {
   if (!walletListBody) return;
 
   // Update Gateway Count Badges
+  const countAll = channelsData.length;
   const countManual = channelsData.filter(c => matchesGateway(c, 'Manual Pay')).length;
   const countSorolpay = channelsData.filter(c => matchesGateway(c, 'Sorolpay')).length;
+  const countCrypto = channelsData.filter(c => matchesGateway(c, 'Crypto')).length;
 
+  const elAll = document.getElementById('count-all');
   const elManual = document.getElementById('count-manual-pay');
   const elSorolpay = document.getElementById('count-sorolpay');
+  const elCrypto = document.getElementById('count-crypto');
 
+  if (elAll) elAll.textContent = countAll;
   if (elManual) elManual.textContent = countManual;
   if (elSorolpay) elSorolpay.textContent = countSorolpay;
+  if (elCrypto) elCrypto.textContent = countCrypto;
 
   // Filter channels according to active gateway option and search term
-  let filtered = channelsData.filter(c => matchesGateway(c, currentGatewayFilter));
+  let filtered = currentGatewayFilter === 'all'
+    ? channelsData
+    : channelsData.filter(c => matchesGateway(c, currentGatewayFilter));
 
   if (currentSearchQuery) {
     const q = currentSearchQuery.toLowerCase();

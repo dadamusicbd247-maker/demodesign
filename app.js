@@ -628,19 +628,16 @@ function renderWalletTable() {
           </span>
         </td>
         <td>
-          <div class="action-controls-wrap">
-            <select 
-              class="table-action-select" 
-              onchange="handleChannelAction(${ch.id}, this.value)"
-              title="Select action"
-            >
-              <option value="" disabled selected>Action ▾</option>
-              <option value="Active" ${ch.status === 'Active' ? 'disabled' : ''}>Active</option>
-              <option value="Deactive" ${ch.status === 'Deactive' ? 'disabled' : ''}>Deactive</option>
-              <option value="delete" style="color: #ef4444; font-weight: 600;">Delete</option>
-            </select>
-            <button class="action-btn-delete" onclick="deleteChannel(${ch.id})" title="Delete">Delete</button>
-          </div>
+          <select 
+            class="table-action-select" 
+            onchange="handleChannelAction(${ch.id}, this.value)"
+            title="Select action"
+          >
+            <option value="" disabled selected>Action ▾</option>
+            <option value="Active" ${ch.status === 'Active' ? 'disabled' : ''}>Active</option>
+            <option value="Deactive" ${ch.status === 'Deactive' ? 'disabled' : ''}>Deactive</option>
+            <option value="delete" style="color: #ef4444; font-weight: 600;">Delete</option>
+          </select>
         </td>
       </tr>
     `;

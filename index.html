@@ -1,0 +1,845 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin - Wallet Management</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="light-mode">
+  <!-- Top Navigation Bar -->
+  <header class="top-nav">
+    <div class="nav-left">
+      <!-- Admin Logo Badge -->
+      <div class="brand-badge static-element">
+        <div class="brand-shield">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+            <path d="m9 12 2 2 4-4"/>
+          </svg>
+        </div>
+        <span class="brand-title">Admin</span>
+      </div>
+
+      <!-- Hamburger Menu Toggle Button (Visual only) -->
+      <div class="nav-toggle-btn static-element" aria-label="Menu Indicator">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="3" y1="6" x2="21" y2="6"/>
+          <line x1="3" y1="12" x2="21" y2="12"/>
+          <line x1="3" y1="18" x2="21" y2="18"/>
+        </svg>
+      </div>
+
+      <!-- Currency Pill (Static Display, clicks off) -->
+      <div class="currency-dropdown-wrap static-element">
+        <div class="currency-pill-btn static-pill">
+          <span>BDT</span>
+          <svg class="chevron-down" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <polyline points="6 9 12 15 18 9"></polyline>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <div class="nav-right">
+      <!-- Theme Switcher Icon (Static Display) -->
+      <div class="theme-toggle-btn static-element" title="Theme Mode">
+        <svg class="moon-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+        </svg>
+      </div>
+
+      <!-- User Profile Box -->
+      <div class="user-profile-badge static-element">
+        <div class="user-avatar-circle">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+            <circle cx="12" cy="7" r="4"></circle>
+          </svg>
+        </div>
+        <div class="user-info-text">
+          <div class="user-row-top">
+            <span class="user-label">User Name :</span>
+            <span class="user-val">6PLY Admin</span>
+            <span class="balance-label">Balance :</span>
+            <span class="balance-val" id="adminBalance">0.00</span>
+          </div>
+          <div class="user-row-bottom">
+            <span class="role-label">User Role :</span>
+            <span class="role-val">Master Admin</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- App Wrapper (Sidebar + Main Content) -->
+  <div class="app-layout">
+    <!-- Left Navigation Sidebar -->
+    <aside class="sidebar" id="sidebar">
+      <ul class="nav-menu">
+        <!-- Wallet Management Menu Item (Single Active Menu) -->
+        <li class="menu-item has-sub open active-group" data-page="wallet">
+          <a href="javascript:void(0)" class="menu-link active-header-pill">
+            <span class="menu-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect>
+                <line x1="1" y1="10" x2="23" y2="10"></line>
+              </svg>
+            </span>
+            <span class="menu-text">Wallet Management</span>
+            <span class="arrow-icon rotated">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
+            </span>
+          </a>
+          <ul class="submenu" style="display: block;">
+            <li>
+              <a href="javascript:void(0)" class="sub-link active-sub-pill" data-tab="add-channel">
+                Add Dp/Wd wallet Channel
+              </a>
+            </li>
+            <li>
+              <a href="javascript:void(0)" class="sub-link" data-tab="wallet-numbers">
+                Dp/Wd Wallet Number List
+              </a>
+            </li>
+            <li>
+              <a href="javascript:void(0)" class="sub-link" data-tab="setting">
+                Setting
+              </a>
+            </li>
+            <li>
+              <a href="javascript:void(0)" class="sub-link" data-tab="currency-rates">
+                Currency &amp; Crypto Rates
+              </a>
+            </li>
+            <li>
+              <a href="javascript:void(0)" class="sub-link" data-tab="deposit-history">
+                Deposit History
+              </a>
+            </li>
+            <li>
+              <a href="javascript:void(0)" class="sub-link" data-tab="withdrawal-history">
+                Withdrawal History
+              </a>
+            </li>
+          </ul>
+        </li>
+      </ul>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="main-content">
+      <div class="content-container">
+        
+
+
+        <!-- Full-width Workspace Area -->
+        <div class="workspace-grid">
+          <!-- Main Tab Content Container -->
+          <section class="tab-content-panel">
+
+            <!-- TAB 1: Add Dp/Wd Wallet Channel (Active View from Screenshot) -->
+            <div class="tab-pane active" id="pane-add-channel">
+              <div class="form-card">
+                <h1 class="form-title">Add Dp/Wd Wallet Channel</h1>
+
+                <form id="addChannelForm" autocomplete="off">
+                  <div class="form-grid" id="customFormGrid">
+                    
+                    <!-- Payment Type Dropdown -->
+                    <div class="form-group" style="max-width: 480px;">
+                      <label class="form-label" for="paymentTypeSelect">Payment Type</label>
+                      <div class="select-wrapper">
+                        <select id="paymentTypeSelect" name="paymentTypeSelect" class="form-control form-select">
+                          <option value="Mobile Banking">Mobile Banking</option>
+                          <option value="Crypto">Crypto</option>
+                        </select>
+                        <svg class="select-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                          <polyline points="6 9 12 15 18 9"></polyline>
+                        </svg>
+                      </div>
+                    </div>
+
+                    <!-- Mobile Banking Fields Group -->
+                    <div id="mobileBankingFields" style="display: contents;">
+                      
+                      <!-- Gateway Dropdown -->
+                      <div class="form-group" style="max-width: 480px;">
+                        <label class="form-label" for="gatewaySelect">Add Gateway</label>
+                        <div class="select-wrapper">
+                          <select id="gatewaySelect" name="gatewaySelect" class="form-control form-select">
+                            <option value="Manual Pay">Manual Pay</option>
+                            <option value="Sorolpay">Sorolpay</option>
+                          </select>
+                          <svg class="select-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                            <polyline points="6 9 12 15 18 9"></polyline>
+                          </svg>
+                        </div>
+                      </div>
+
+                      <!-- Add Channel Dropdown -->
+                      <div class="form-group" style="max-width: 480px;">
+                        <label class="form-label" for="channelTypeSelect">Add Channel</label>
+                        <div class="select-wrapper">
+                          <select id="channelTypeSelect" name="channelTypeSelect" class="form-control form-select">
+                            <option value="Cashout">Cashout</option>
+                            <option value="Send Many">Send Many</option>
+                            <option value="Payment">Payment</option>
+                          </select>
+                          <svg class="select-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                            <polyline points="6 9 12 15 18 9"></polyline>
+                          </svg>
+                        </div>
+                      </div>
+
+                      <!-- Payment Method Dropdown -->
+                      <div class="form-group" style="max-width: 480px;">
+                        <label class="form-label" for="paymentMethodSelect">Payment Method</label>
+                        <div class="select-wrapper">
+                          <select id="paymentMethodSelect" name="paymentMethodSelect" class="form-control form-select">
+                            <option value="Bkash">Bkash</option>
+                            <option value="Nagad">Nagad</option>
+                            <option value="Rokcet">Rokcet</option>
+                            <option value="Upay">Upay</option>
+                          </select>
+                          <svg class="select-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                            <polyline points="6 9 12 15 18 9"></polyline>
+                          </svg>
+                        </div>
+                      </div>
+
+                      <!-- Add Phone Number Field -->
+                      <div class="form-group" style="max-width: 480px;">
+                        <label class="form-label" for="phoneNumberInput">
+                          Add Phone Number
+                          <span class="label-hint">(11 Digits • Bangladeshi Only)</span>
+                        </label>
+                        <input 
+                          type="tel" 
+                          id="phoneNumberInput" 
+                          name="phoneNumber" 
+                          class="form-control" 
+                          placeholder="e.g. 017XXXXXXXX" 
+                          autocomplete="off"
+                          inputmode="numeric"
+                          maxlength="11"
+                        >
+                        <small id="phoneValidationHint" style="font-size: 11.5px; color: var(--text-light); margin-top: 4px; display: block;">
+                          Only 11-digit Bangladeshi mobile numbers (01...) are accepted
+                        </small>
+                      </div>
+
+                    </div>
+
+                    <!-- Crypto Fields Group (Coming Soon / Developer Mode) -->
+                    <div id="cryptoFields" style="display: none; grid-column: span 2; max-width: 560px;">
+                      <div class="crypto-coming-soon-box">
+                        <div class="crypto-badge-tag">
+                          <span class="pulse-dot"></span>
+                          COMING SOON
+                        </div>
+                        <div class="crypto-title">Crypto Payment Integration</div>
+                        <div class="crypto-desc">Web3 automated blockchain deposit &amp; withdrawal (USDT TRC20 / ERC20) is currently under active development.</div>
+                        <div class="crypto-dev-tag">Developer Status: <code>Under Development (Developer Mode)</code></div>
+                      </div>
+                    </div>
+
+                  </div>
+
+                  <!-- Form Action Buttons -->
+                  <div class="form-actions" style="margin-top: 24px;">
+                    <button type="submit" id="btnSaveChannel" class="btn-save">
+                      <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" style="margin-right: 6px;">
+                        <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
+                        <polyline points="17 21 17 13 7 13 7 21"></polyline>
+                        <polyline points="7 3 7 8 15 8"></polyline>
+                      </svg>
+                      Save
+                    </button>
+                  </div>
+
+                  <!-- Dynamic container for selected gateway fields -->
+                  <div id="gatewayConfigArea" style="margin-top: 16px;"></div>
+                </form>
+              </div>
+            </div>
+
+            <!-- TAB 2: Dp/Wd Wallet Number List (Interactive Table View) -->
+            <div class="tab-pane" id="pane-wallet-numbers">
+              <div class="form-card">
+                <div class="table-header-wrap">
+                  <h1 class="form-title">Dp/Wd Wallet Number List</h1>
+                  <button class="btn-primary-sm" onclick="switchTab('add-channel')">+ Create Channel</button>
+                </div>
+                <div class="table-responsive">
+                  <table class="data-table">
+                    <thead>
+                      <tr>
+                        <th>Channel</th>
+                        <th>Type</th>
+                        <th>Account / Address</th>
+                        <th>Currency</th>
+                        <th>Limits</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                      </tr>
+                    </thead>
+                    <tbody id="walletListBody">
+                      <!-- Rendered dynamically by JS -->
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+
+            <!-- TAB: Setting (contains Deposit & Withdraw) -->
+            <div class="tab-pane" id="pane-setting">
+              <div class="form-card">
+                
+                <!-- Minimalist Segmented Tabs: Deposit & Withdraw -->
+                <div class="setting-tab-header">
+                  <div class="minimal-tabs-bar" role="tablist">
+                    <button type="button" class="minimal-tab-btn active" id="pillSettingDeposit" data-setting-tab="deposit">
+                      <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2">
+                        <path d="M12 4v12m0 0l-5-5m5 5l5-5"></path>
+                        <path d="M4 19h16" stroke-linecap="round"></path>
+                      </svg>
+                      <span>Deposit</span>
+                    </button>
+
+                    <button type="button" class="minimal-tab-btn" id="pillSettingWithdraw" data-setting-tab="withdraw">
+                      <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2">
+                        <path d="M12 16V4m0 0l-5 5m5-5l5 5"></path>
+                        <path d="M4 19h16" stroke-linecap="round"></path>
+                      </svg>
+                      <span>Withdraw</span>
+                    </button>
+
+                    <button type="button" class="minimal-tab-btn" id="pillSettingGateway" data-setting-tab="gateway">
+                      <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2">
+                        <rect x="2" y="5" width="20" height="14" rx="2"></rect>
+                        <line x1="2" y1="10" x2="22" y2="10"></line>
+                      </svg>
+                      <span>Gateway</span>
+                    </button>
+                  </div>
+                </div>
+
+                <!-- SUB-SECTION 1: Deposit Settings -->
+                <div id="settingDepositSection" style="display: block;">
+                  <form id="depositForm" autocomplete="off">
+                    <div class="form-grid" id="depositFormGrid">
+                      
+                      <!-- Payment Type Dropdown -->
+                      <div class="form-group" style="max-width: 480px;">
+                        <label class="form-label" for="depositPaymentTypeSelect">Payment Type</label>
+                        <div class="select-wrapper">
+                          <select id="depositPaymentTypeSelect" name="depositPaymentTypeSelect" class="form-control form-select">
+                            <option value="Mobile Banking">Mobile Banking</option>
+                            <option value="Crypto">Crypto</option>
+                          </select>
+                          <svg class="select-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                            <polyline points="6 9 12 15 18 9"></polyline>
+                          </svg>
+                        </div>
+                      </div>
+
+                      <!-- Deposit Mobile Banking Fields Group -->
+                      <div id="depositMobileBankingFields" style="display: contents;">
+                        
+                        <!-- Gateway Dropdown -->
+                        <div class="form-group" style="max-width: 480px;">
+                          <label class="form-label" for="depositGatewaySelect">Gateway</label>
+                          <div class="select-wrapper">
+                            <select id="depositGatewaySelect" name="depositGatewaySelect" class="form-control form-select">
+                              <option value="Manual Pay">Manual Pay</option>
+                              <option value="Sorolpay">Sorolpay</option>
+                            </select>
+                            <svg class="select-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                              <polyline points="6 9 12 15 18 9"></polyline>
+                            </svg>
+                          </div>
+                        </div>
+
+                        <!-- Payment Method Channel Dropdown -->
+                        <div class="form-group" style="max-width: 480px;">
+                          <label class="form-label" for="depositChannelSelect">Payment Method Channel</label>
+                          <div class="select-wrapper">
+                            <select id="depositChannelSelect" name="depositChannelSelect" class="form-control form-select">
+                              <option value="Cashout">Cashout</option>
+                              <option value="Send Many">Send Many</option>
+                              <option value="Payment">Payment</option>
+                            </select>
+                            <svg class="select-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                              <polyline points="6 9 12 15 18 9"></polyline>
+                            </svg>
+                          </div>
+                        </div>
+
+                        <!-- Deposit Reminder Field -->
+                        <div class="form-group col-span-2" style="max-width: 560px;">
+                          <label class="form-label" for="depositReminderEditor">
+                            Reminder
+                            <span class="label-hint">(Editable • Select text &amp; click <strong>B</strong> to bold)</span>
+                          </label>
+                          
+                          <div class="editor-container" id="depositEditorContainer">
+                            <div class="editor-toolbar" id="depositEditorToolbar">
+                              <button type="button" class="editor-btn" id="depositBtnBold" title="Bold (Ctrl+B)" data-command="bold">
+                                <strong>B</strong>
+                              </button>
+                              <button type="button" class="editor-btn" id="depositBtnItalic" title="Italic (Ctrl+I)" data-command="italic">
+                                <em>I</em>
+                              </button>
+                              <button type="button" class="editor-btn" id="depositBtnUnderline" title="Underline (Ctrl+U)" data-command="underline">
+                                <u>U</u>
+                              </button>
+                              <div class="editor-divider"></div>
+                              <button type="button" class="editor-btn" id="depositBtnList" title="Bullet List" data-command="insertUnorderedList">
+                                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2">
+                                  <line x1="8" y1="6" x2="21" y2="6"></line>
+                                  <line x1="8" y1="12" x2="21" y2="12"></line>
+                                  <line x1="8" y1="18" x2="21" y2="18"></line>
+                                  <line x1="3" y1="6" x2="3.01" y2="6"></line>
+                                  <line x1="3" y1="12" x2="3.01" y2="12"></line>
+                                  <line x1="3" y1="18" x2="3.01" y2="18"></line>
+                                </svg>
+                              </button>
+                              <button type="button" class="editor-btn" id="depositBtnClear" title="Clear Formatting" data-command="removeFormat">
+                                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2">
+                                  <path d="M4 7h16M10 7v13M14 7v13M6 20h12"></path>
+                                </svg>
+                              </button>
+                            </div>
+                            
+                            <div 
+                              id="depositReminderEditor" 
+                              class="rich-text-editor" 
+                              contenteditable="true" 
+                              role="textbox" 
+                              aria-multiline="true"
+                              data-placeholder="Enter reminder text here... You can edit and format text to bold."
+                            ></div>
+                            <input type="hidden" name="depositReminder" id="depositReminderHiddenInput">
+                          </div>
+                        </div>
+
+                        <!-- Deposit Limit Fields (Minimum & Maximum) -->
+                        <div class="form-group col-span-2" style="max-width: 560px; margin-top: 6px;">
+                          <label class="form-label" style="font-size: 13.5px; font-weight: 600; color: #1e293b; margin-bottom: 8px;">
+                            Deposit Limit
+                            <span class="label-hint">(Minimum &amp; Maximum)</span>
+                          </label>
+                          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px;">
+                            <div>
+                              <label class="form-label" for="minDepositLimit" style="font-size: 12px; color: var(--text-muted);">
+                                Minimum Deposit Limit
+                              </label>
+                              <input 
+                                type="number" 
+                                id="minDepositLimit" 
+                                name="minDepositLimit" 
+                                class="form-control" 
+                                placeholder="e.g. 100" 
+                                min="0"
+                                step="any"
+                              >
+                            </div>
+                            <div>
+                              <label class="form-label" for="maxDepositLimit" style="font-size: 12px; color: var(--text-muted);">
+                                Maximum Deposit Limit
+                              </label>
+                              <input 
+                                type="number" 
+                                id="maxDepositLimit" 
+                                name="maxDepositLimit" 
+                                class="form-control" 
+                                placeholder="e.g. 50000" 
+                                min="0"
+                                step="any"
+                              >
+                            </div>
+                          </div>
+                        </div>
+
+                      </div> <!-- end depositMobileBankingFields -->
+
+                      <!-- Deposit Crypto Fields (Coming Soon / Developer Mode) -->
+                      <div id="depositCryptoFields" style="display: none; grid-column: span 2; max-width: 560px;">
+                        <div class="crypto-coming-soon-box">
+                          <div class="crypto-badge-tag">
+                            <span class="pulse-dot"></span>
+                            COMING SOON
+                          </div>
+                          <div class="crypto-title">Crypto Deposit Integration</div>
+                          <div class="crypto-desc">Web3 automated blockchain deposit gateway is under active development. Deposit limits and channels will be enabled soon.</div>
+                          <div class="crypto-dev-tag">Developer Status: <code>Under Development (Developer Mode)</code></div>
+                        </div>
+                      </div>
+
+                    </div>
+
+                    <!-- Deposit Form Save Button -->
+                    <div class="form-actions" style="margin-top: 24px;">
+                      <button type="submit" id="btnSaveDeposit" class="btn-save">
+                        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" style="margin-right: 6px;">
+                          <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
+                          <polyline points="17 21 17 13 7 13 7 21"></polyline>
+                          <polyline points="7 3 7 8 15 8"></polyline>
+                        </svg>
+                        Save
+                      </button>
+                    </div>
+                  </form>
+                </div>
+
+                <!-- SUB-SECTION 2: Withdraw Settings -->
+                <div id="settingWithdrawSection" style="display: none;">
+                  <form id="withdrawForm" autocomplete="off">
+                    <div class="form-grid" id="withdrawFormGrid">
+                      
+                      <!-- Withdraw Reminder Field -->
+                      <div class="form-group col-span-2" style="max-width: 560px;">
+                        <label class="form-label" for="withdrawReminderEditor">
+                          Reminder
+                          <span class="label-hint">(Editable • Select text &amp; click <strong>B</strong> to bold)</span>
+                        </label>
+                        
+                        <div class="editor-container" id="withdrawEditorContainer">
+                          <div class="editor-toolbar" id="withdrawEditorToolbar">
+                            <button type="button" class="editor-btn" id="withdrawBtnBold" title="Bold (Ctrl+B)" data-command="bold">
+                              <strong>B</strong>
+                            </button>
+                            <button type="button" class="editor-btn" id="withdrawBtnItalic" title="Italic (Ctrl+I)" data-command="italic">
+                              <em>I</em>
+                            </button>
+                            <button type="button" class="editor-btn" id="withdrawBtnUnderline" title="Underline (Ctrl+U)" data-command="underline">
+                              <u>U</u>
+                            </button>
+                            <div class="editor-divider"></div>
+                            <button type="button" class="editor-btn" id="withdrawBtnList" title="Bullet List" data-command="insertUnorderedList">
+                              <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2">
+                                <line x1="8" y1="6" x2="21" y2="6"></line>
+                                <line x1="8" y1="12" x2="21" y2="12"></line>
+                                <line x1="8" y1="18" x2="21" y2="18"></line>
+                                <line x1="3" y1="6" x2="3.01" y2="6"></line>
+                                <line x1="3" y1="12" x2="3.01" y2="12"></line>
+                                <line x1="3" y1="18" x2="3.01" y2="18"></line>
+                              </svg>
+                            </button>
+                            <button type="button" class="editor-btn" id="withdrawBtnClear" title="Clear Formatting" data-command="removeFormat">
+                              <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M4 7h16M10 7v13M14 7v13M6 20h12"></path>
+                              </svg>
+                            </button>
+                          </div>
+                          
+                          <div 
+                            id="withdrawReminderEditor" 
+                            class="rich-text-editor" 
+                            contenteditable="true" 
+                            role="textbox" 
+                            aria-multiline="true"
+                            data-placeholder="Enter withdrawal reminder text here... You can edit and format text to bold."
+                          ></div>
+                          <input type="hidden" name="withdrawReminder" id="withdrawReminderHiddenInput">
+                        </div>
+                      </div>
+
+                      <!-- Withdraw Limit Fields (Minimum & Maximum) -->
+                      <div class="form-group col-span-2" style="max-width: 560px; margin-top: 6px;">
+                        <label class="form-label" style="font-size: 13.5px; font-weight: 600; color: #1e293b; margin-bottom: 8px;">
+                          Withdraw Limit
+                          <span class="label-hint">(Minimum &amp; Maximum)</span>
+                        </label>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px;">
+                          <div>
+                            <label class="form-label" for="minWithdrawLimit" style="font-size: 12px; color: var(--text-muted);">
+                              Minimum Withdraw Limit
+                            </label>
+                            <input 
+                              type="number" 
+                              id="minWithdrawLimit" 
+                              name="minWithdrawLimit" 
+                              class="form-control" 
+                              placeholder="e.g. 500" 
+                              min="0"
+                              step="any"
+                            >
+                          </div>
+                          <div>
+                            <label class="form-label" for="maxWithdrawLimit" style="font-size: 12px; color: var(--text-muted);">
+                              Maximum Withdraw Limit
+                            </label>
+                            <input 
+                              type="number" 
+                              id="maxWithdrawLimit" 
+                              name="maxWithdrawLimit" 
+                              class="form-control" 
+                              placeholder="e.g. 25000" 
+                              min="0"
+                              step="any"
+                            >
+                          </div>
+                        </div>
+                      </div>
+
+                    </div>
+
+                    <!-- Withdraw Form Save Button -->
+                    <div class="form-actions" style="margin-top: 24px;">
+                      <button type="submit" id="btnSaveWithdraw" class="btn-save">
+                        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" style="margin-right: 6px;">
+                          <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
+                          <polyline points="17 21 17 13 7 13 7 21"></polyline>
+                          <polyline points="7 3 7 8 15 8"></polyline>
+                        </svg>
+                        Save
+                      </button>
+                    </div>
+                  </form>
+                </div>
+
+                <!-- SUB-SECTION 3: Gateway Management (All Gateways with ON/OFF Switches) -->
+                <div id="settingGatewaySection" style="display: none;">
+                  <div class="gateway-section-header" style="margin-bottom: 20px;">
+                    <h3 style="font-size: 16.5px; font-weight: 600; color: #1e293b; margin-bottom: 4px;">Gateways Management</h3>
+                    <p style="font-size: 13px; color: var(--text-muted); margin: 0;">Enable or disable payment gateways. Real-time ON/OFF toggle controls active status.</p>
+                  </div>
+
+                  <div class="gateway-cards-container">
+                    
+                    <!-- Gateway 1: Manual Pay -->
+                    <div class="gateway-manage-card" id="card-gateway-manual-pay">
+                      <div class="gateway-card-left">
+                        <div class="gateway-icon-badge" style="background: #eff6ff; color: #2563eb;">
+                          <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect>
+                            <line x1="12" y1="18" x2="12.01" y2="18"></line>
+                          </svg>
+                        </div>
+                        <div class="gateway-details">
+                          <div class="gateway-title-row">
+                            <span class="gateway-title">Manual Pay</span>
+                            <span class="gateway-badge active" id="badge-manual-pay">ACTIVE</span>
+                          </div>
+                          <span class="gateway-subtitle">Direct Manual Agent Processing (bKash, Nagad, Rocket, Upay)</span>
+                        </div>
+                      </div>
+                      
+                      <div class="gateway-card-right">
+                        <span class="gateway-toggle-text active" id="text-manual-pay">ON</span>
+                        <label class="gateway-switch">
+                          <input type="checkbox" id="switch-manual-pay" checked data-gateway-id="manual-pay" data-gateway-name="Manual Pay">
+                          <span class="gateway-slider"></span>
+                        </label>
+                      </div>
+                    </div>
+
+                    <!-- Gateway 2: Sorolpay -->
+                    <div class="gateway-manage-card" id="card-gateway-sorolpay">
+                      <div class="gateway-card-left">
+                        <div class="gateway-icon-badge" style="background: #fdf4ff; color: #c026d3;">
+                          <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2">
+                            <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+                          </svg>
+                        </div>
+                        <div class="gateway-details">
+                          <div class="gateway-title-row">
+                            <span class="gateway-title">Sorolpay</span>
+                            <span class="gateway-badge active" id="badge-sorolpay">ACTIVE</span>
+                          </div>
+                          <span class="gateway-subtitle">Fast Automated API Payment Gateway for Mobile Banking</span>
+                        </div>
+                      </div>
+                      
+                      <div class="gateway-card-right">
+                        <span class="gateway-toggle-text active" id="text-sorolpay">ON</span>
+                        <label class="gateway-switch">
+                          <input type="checkbox" id="switch-sorolpay" checked data-gateway-id="sorolpay" data-gateway-name="Sorolpay">
+                          <span class="gateway-slider"></span>
+                        </label>
+                      </div>
+                    </div>
+
+                    <!-- Gateway 3: Crypto Gateway (USDT) -->
+                    <div class="gateway-manage-card" id="card-gateway-crypto-pay">
+                      <div class="gateway-card-left">
+                        <div class="gateway-icon-badge" style="background: #f5f3ff; color: #7c3aed;">
+                          <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="9"></circle>
+                            <path d="M9 8h4.5a2.5 2.5 0 0 1 0 5H9m0 0h5a2.5 2.5 0 0 1 0 5H9m0-10v10"></path>
+                          </svg>
+                        </div>
+                        <div class="gateway-details">
+                          <div class="gateway-title-row">
+                            <span class="gateway-title">Crypto Gateway (USDT)</span>
+                            <span class="gateway-badge active" id="badge-crypto-pay">ACTIVE</span>
+                          </div>
+                          <span class="gateway-subtitle">Web3 Automated Blockchain Deposit (TRC20 / ERC20)</span>
+                        </div>
+                      </div>
+                      
+                      <div class="gateway-card-right">
+                        <span class="gateway-toggle-text active" id="text-crypto-pay">ON</span>
+                        <label class="gateway-switch">
+                          <input type="checkbox" id="switch-crypto-pay" checked data-gateway-id="crypto-pay" data-gateway-name="Crypto Gateway">
+                          <span class="gateway-slider"></span>
+                        </label>
+                      </div>
+                    </div>
+
+                  </div>
+                </div>
+
+              </div>
+            </div>
+
+            <!-- TAB 3: Currency & Crypto Rates -->
+            <div class="tab-pane" id="pane-currency-rates">
+              <div class="form-card">
+                <h1 class="form-title">Currency &amp; Crypto Rates</h1>
+                <p class="section-desc">Manage real-time conversion rates against Base Currency (BDT).</p>
+                <div class="table-responsive">
+                  <table class="data-table">
+                    <thead>
+                      <tr>
+                        <th>Currency</th>
+                        <th>Symbol</th>
+                        <th>Rate (1 Unit in BDT)</th>
+                        <th>Auto Update</th>
+                        <th>Last Updated</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td><strong>USDT (Tether)</strong></td>
+                        <td>USDT</td>
+                        <td><input type="text" class="table-input" value="124.50 BDT"></td>
+                        <td><span class="badge-active">Active (Binance API)</span></td>
+                        <td>Just now</td>
+                      </tr>
+                      <tr>
+                        <td><strong>INR (Indian Rupee)</strong></td>
+                        <td>INR</td>
+                        <td><input type="text" class="table-input" value="1.42 BDT"></td>
+                        <td><span class="badge-active">Active</span></td>
+                        <td>10 mins ago</td>
+                      </tr>
+                      <tr>
+                        <td><strong>USD</strong></td>
+                        <td>USD</td>
+                        <td><input type="text" class="table-input" value="122.80 BDT"></td>
+                        <td><span class="badge-active">Active</span></td>
+                        <td>1 hour ago</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+
+            <!-- TAB 4: Deposit History -->
+            <div class="tab-pane" id="pane-deposit-history">
+              <div class="form-card">
+                <h1 class="form-title">Deposit History</h1>
+                <p class="section-desc">Live player deposit requests, transaction IDs, and manual verification logs.</p>
+                <div class="table-responsive">
+                  <table class="data-table">
+                    <thead>
+                      <tr>
+                        <th>Transaction ID</th>
+                        <th>Player ID</th>
+                        <th>Channel</th>
+                        <th>Amount</th>
+                        <th>TrxID / Proof</th>
+                        <th>Date &amp; Time</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td><strong>#DP-89214</strong></td>
+                        <td>player_joy77</td>
+                        <td>bKash Personal</td>
+                        <td><strong>5,000 BDT</strong></td>
+                        <td><code>BK9X89218LA</code></td>
+                        <td>Today 17:15</td>
+                        <td><span class="badge-pending">Pending</span></td>
+                        <td>
+                          <button class="action-btn-approve">Approve</button>
+                          <button class="action-btn-reject">Reject</button>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td><strong>#DP-89210</strong></td>
+                        <td>kawsar_vip</td>
+                        <td>Nagad Agent</td>
+                        <td><strong>2,500 BDT</strong></td>
+                        <td><code>NG77192801</code></td>
+                        <td>Today 16:42</td>
+                        <td><span class="badge-approved">Approved</span></td>
+                        <td><span class="text-muted">Completed</span></td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+
+            <!-- TAB 5: Withdrawal History -->
+            <div class="tab-pane" id="pane-withdrawal-history">
+              <div class="form-card">
+                <h1 class="form-title">Withdrawal History</h1>
+                <p class="section-desc">Live cash-out requests awaiting disbursement and admin approval.</p>
+                <div class="table-responsive">
+                  <table class="data-table">
+                    <thead>
+                      <tr>
+                        <th>Withdraw ID</th>
+                        <th>Player ID</th>
+                        <th>Payout Channel</th>
+                        <th>Amount</th>
+                        <th>Receiver Account</th>
+                        <th>Date &amp; Time</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td><strong>#WD-44312</strong></td>
+                        <td>shuvo_pro</td>
+                        <td>Nagad</td>
+                        <td><strong>12,000 BDT</strong></td>
+                        <td><code>01829384910</code></td>
+                        <td>Today 16:55</td>
+                        <td><span class="badge-pending">Reviewing</span></td>
+                        <td>
+                          <button class="action-btn-approve">Disburse</button>
+                          <button class="action-btn-reject">Decline</button>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </section>
+        </div>
+
+      </div>
+    </main>
+  </div>
+
+  <!-- Toast Notification System -->
+  <div id="toastContainer" class="toast-container"></div>
+
+  <script src="app.js"></script>
+</body>
+</html>

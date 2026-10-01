@@ -972,14 +972,79 @@ body.dark-mode .theme-toggle-btn {
   color: #ffffff;
 }
 
-/* Status Filter Bar (All Status, Active, Deactive) */
-.filter-left-group {
+/* Filter Container Rows & Groups */
+.filter-controls-row {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 16px;
+  flex-wrap: wrap;
+  width: 100%;
+}
+
+.secondary-filter-row {
+  margin-top: 10px;
+  justify-content: space-between;
+}
+
+.filter-group-wrap {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
   flex-wrap: wrap;
 }
 
+.filter-group-label {
+  font-size: 11.5px;
+  font-weight: 700;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.wallet-channel-filter-bar {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: #f1f5f9;
+  padding: 4px;
+  border-radius: 9px;
+  border: 1px solid #e2e8f0;
+}
+
+.channel-filter-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 13px;
+  font-size: 12.5px;
+  font-weight: 500;
+  color: #64748b;
+  background: transparent;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.18s ease;
+  user-select: none;
+}
+
+.channel-filter-btn:hover {
+  color: #1e293b;
+  background: rgba(255, 255, 255, 0.7);
+}
+
+.channel-filter-btn.active {
+  color: #0f172a;
+  font-weight: 600;
+  background: #ffffff;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+}
+
+.channel-filter-btn.active .filter-count-badge {
+  background: #7c3aed;
+  color: #ffffff;
+}
+
+/* Status Filter Bar (All Status, Active, Deactive) */
 .wallet-status-filter-bar {
   display: inline-flex;
   align-items: center;

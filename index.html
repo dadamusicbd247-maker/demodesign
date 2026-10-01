@@ -276,54 +276,86 @@
                   <button class="btn-primary-sm" onclick="switchTab('add-channel')">+ Create Channel</button>
                 </div>
 
-                <!-- Gateway & Status Filter Options + Search -->
+                <!-- Multi-Dimension Filters: Gateway, Channel (Cashout, Send Money, Payment), Status & Search -->
                 <div class="wallet-filter-container">
-                  <div class="filter-left-group">
-                    <!-- Gateway Filter Tabs -->
-                    <div class="wallet-gateway-filter-bar" id="walletGatewayFilterBar">
-                      <button type="button" class="gateway-filter-btn active" data-filter="all">
-                        <span>All</span>
-                        <span class="filter-count-badge" id="count-all">0</span>
-                      </button>
-                      <button type="button" class="gateway-filter-btn" data-filter="Manual Pay">
-                        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="5" y="2" width="14" height="20" rx="2"></rect><line x1="12" y1="18" x2="12.01" y2="18"></line></svg>
-                        <span>Manual Pay</span>
-                        <span class="filter-count-badge" id="count-manual-pay">0</span>
-                      </button>
-                      <button type="button" class="gateway-filter-btn" data-filter="Sorolpay">
-                        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
-                        <span>Sorolpay</span>
-                        <span class="filter-count-badge" id="count-sorolpay">0</span>
-                      </button>
-                      <button type="button" class="gateway-filter-btn" data-filter="Crypto">
-                        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="9"></circle><path d="M9 8h4.5a2.5 2.5 0 0 1 0 5H9m0 0h5a2.5 2.5 0 0 1 0 5H9m0-10v10"></path></svg>
-                        <span>Crypto</span>
-                        <span class="filter-count-badge" id="count-crypto">0</span>
-                      </button>
+                  <div class="filter-controls-row">
+                    <!-- 1. Gateway Filter -->
+                    <div class="filter-group-wrap">
+                      <span class="filter-group-label">Gateway:</span>
+                      <div class="wallet-gateway-filter-bar" id="walletGatewayFilterBar">
+                        <button type="button" class="gateway-filter-btn active" data-filter="all">
+                          <span>All</span>
+                          <span class="filter-count-badge" id="count-all">0</span>
+                        </button>
+                        <button type="button" class="gateway-filter-btn" data-filter="Manual Pay">
+                          <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="5" y="2" width="14" height="20" rx="2"></rect><line x1="12" y1="18" x2="12.01" y2="18"></line></svg>
+                          <span>Manual Pay</span>
+                          <span class="filter-count-badge" id="count-manual-pay">0</span>
+                        </button>
+                        <button type="button" class="gateway-filter-btn" data-filter="Sorolpay">
+                          <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
+                          <span>Sorolpay</span>
+                          <span class="filter-count-badge" id="count-sorolpay">0</span>
+                        </button>
+                        <button type="button" class="gateway-filter-btn" data-filter="Crypto">
+                          <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="9"></circle><path d="M9 8h4.5a2.5 2.5 0 0 1 0 5H9m0 0h5a2.5 2.5 0 0 1 0 5H9m0-10v10"></path></svg>
+                          <span>Crypto</span>
+                          <span class="filter-count-badge" id="count-crypto">0</span>
+                        </button>
+                      </div>
                     </div>
 
-                    <!-- Status Filter Tabs (All Status, Active, Deactive) -->
-                    <div class="wallet-status-filter-bar" id="walletStatusFilterBar">
-                      <button type="button" class="status-filter-btn active" data-status-filter="all">
-                        <span>All Status</span>
-                        <span class="filter-count-badge" id="count-status-all">0</span>
-                      </button>
-                      <button type="button" class="status-filter-btn" data-status-filter="Active">
-                        <span class="status-dot-mini" style="background:#16a34a;"></span>
-                        <span>Active</span>
-                        <span class="filter-count-badge" id="count-status-active">0</span>
-                      </button>
-                      <button type="button" class="status-filter-btn btn-filter-deactive" data-status-filter="Deactive">
-                        <span class="status-dot-mini" style="background:#ef4444;"></span>
-                        <span>Deactive</span>
-                        <span class="filter-count-badge" id="count-status-deactive">0</span>
-                      </button>
+                    <!-- 2. Channel Filter (Cashout, Send Money, Payment) -->
+                    <div class="filter-group-wrap">
+                      <span class="filter-group-label">Channel:</span>
+                      <div class="wallet-channel-filter-bar" id="walletChannelFilterBar">
+                        <button type="button" class="channel-filter-btn active" data-channel-filter="all">
+                          <span>All</span>
+                          <span class="filter-count-badge" id="count-channel-all">0</span>
+                        </button>
+                        <button type="button" class="channel-filter-btn" data-channel-filter="Cashout">
+                          <span>Cashout</span>
+                          <span class="filter-count-badge" id="count-channel-cashout">0</span>
+                        </button>
+                        <button type="button" class="channel-filter-btn" data-channel-filter="Send Many">
+                          <span>Send Money</span>
+                          <span class="filter-count-badge" id="count-channel-sendmoney">0</span>
+                        </button>
+                        <button type="button" class="channel-filter-btn" data-channel-filter="Payment">
+                          <span>Payment</span>
+                          <span class="filter-count-badge" id="count-channel-payment">0</span>
+                        </button>
+                      </div>
                     </div>
                   </div>
 
-                  <div class="wallet-filter-search">
-                    <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" class="search-icon"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-                    <input type="text" id="walletSearchInput" class="wallet-search-input" placeholder="Find out by number, method...">
+                  <div class="filter-controls-row secondary-filter-row">
+                    <!-- 3. Status Filter (All Status, Active, Deactive) -->
+                    <div class="filter-group-wrap">
+                      <span class="filter-group-label">Status:</span>
+                      <div class="wallet-status-filter-bar" id="walletStatusFilterBar">
+                        <button type="button" class="status-filter-btn active" data-status-filter="all">
+                          <span>All Status</span>
+                          <span class="filter-count-badge" id="count-status-all">0</span>
+                        </button>
+                        <button type="button" class="status-filter-btn" data-status-filter="Active">
+                          <span class="status-dot-mini" style="background:#16a34a;"></span>
+                          <span>Active</span>
+                          <span class="filter-count-badge" id="count-status-active">0</span>
+                        </button>
+                        <button type="button" class="status-filter-btn btn-filter-deactive" data-status-filter="Deactive">
+                          <span class="status-dot-mini" style="background:#ef4444;"></span>
+                          <span>Deactive</span>
+                          <span class="filter-count-badge" id="count-status-deactive">0</span>
+                        </button>
+                      </div>
+                    </div>
+
+                    <!-- 4. Quick Search -->
+                    <div class="wallet-filter-search">
+                      <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" class="search-icon"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                      <input type="text" id="walletSearchInput" class="wallet-search-input" placeholder="Find out by number, method...">
+                    </div>
                   </div>
                 </div>
 

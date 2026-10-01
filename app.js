@@ -321,7 +321,8 @@ function initAddChannelForm() {
         max: 50000,
         sort: channelsData.length + 1,
         status: 'Active',
-        paymentType: paymentType
+        paymentType: paymentType,
+        channel: channel
       };
 
       channelsData.unshift(newChannel);
@@ -519,6 +520,7 @@ function initWithdrawHandler() {
 
 // --- Wallet Filter Bar State & Logic ---
 let currentGatewayFilter = 'all'; // 'all', 'Manual Pay', 'Sorolpay', 'Crypto'
+let currentChannelFilter = 'all'; // 'all', 'Cashout', 'Send Many', 'Payment'
 let currentStatusFilter = 'all';  // 'all', 'Active', 'Deactive'
 let currentSearchQuery = '';
 
@@ -537,8 +539,23 @@ function matchesGateway(ch, gateway) {
   return holder === target || type.includes(target);
 }
 
+function matchesChannel(ch, channelType) {
+  if (!ch) return false;
+  if (channelType === 'all') return true;
+  const target = channelType.toLowerCase();
+  const name = (ch.name || '').toLowerCase();
+  const type = (ch.type || '').toLowerCase();
+  const directChannel = (ch.channel || '').toLowerCase();
+
+  if (target === 'send many' || target === 'send money') {
+    return directChannel.includes('send') || name.includes('send') || type.includes('send');
+  }
+  return directChannel.includes(target) || name.includes(target) || type.includes(target);
+}
+
 function initWalletFilterBar() {
   const filterBtns = document.querySelectorAll('.gateway-filter-btn');
+  const channelFilterBtns = document.querySelectorAll('.channel-filter-btn');
   const statusFilterBtns = document.querySelectorAll('.status-filter-btn');
   const searchInput = document.getElementById('walletSearchInput');
 
@@ -548,6 +565,17 @@ function initWalletFilterBar() {
       const filter = btn.getAttribute('data-filter');
       currentGatewayFilter = filter;
       filterBtns.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      renderWalletTable();
+    });
+  });
+
+  // Channel filter buttons (All, Cashout, Send Money, Payment)
+  channelFilterBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const filter = btn.getAttribute('data-channel-filter');
+      currentChannelFilter = filter;
+      channelFilterBtns.forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
       renderWalletTable();
     });
@@ -592,6 +620,22 @@ function renderWalletTable() {
   if (elSorolpay) elSorolpay.textContent = countSorolpay;
   if (elCrypto) elCrypto.textContent = countCrypto;
 
+  // Update Channel Count Badges (All, Cashout, Send Money, Payment)
+  const countChAll = channelsData.length;
+  const countCashout = channelsData.filter(c => matchesChannel(c, 'Cashout')).length;
+  const countSendMoney = channelsData.filter(c => matchesChannel(c, 'Send Many')).length;
+  const countPayment = channelsData.filter(c => matchesChannel(c, 'Payment')).length;
+
+  const elChAll = document.getElementById('count-channel-all');
+  const elChCashout = document.getElementById('count-channel-cashout');
+  const elChSendMoney = document.getElementById('count-channel-sendmoney');
+  const elChPayment = document.getElementById('count-channel-payment');
+
+  if (elChAll) elChAll.textContent = countChAll;
+  if (elChCashout) elChCashout.textContent = countCashout;
+  if (elChSendMoney) elChSendMoney.textContent = countSendMoney;
+  if (elChPayment) elChPayment.textContent = countPayment;
+
   // Update Status Count Badges (All Status, Active, Deactive)
   const countStatusAll = channelsData.length;
   const countStatusActive = channelsData.filter(c => c.status === 'Active').length;
@@ -605,10 +649,14 @@ function renderWalletTable() {
   if (elStatusActive) elStatusActive.textContent = countStatusActive;
   if (elStatusDeactive) elStatusDeactive.textContent = countStatusDeactive;
 
-  // Filter channels according to active gateway, status filter, and search term
+  // Filter channels according to active gateway, channel, status filter, and search term
   let filtered = currentGatewayFilter === 'all'
     ? channelsData
     : channelsData.filter(c => matchesGateway(c, currentGatewayFilter));
+
+  if (currentChannelFilter !== 'all') {
+    filtered = filtered.filter(c => matchesChannel(c, currentChannelFilter));
+  }
 
   if (currentStatusFilter !== 'all') {
     filtered = filtered.filter(c => c.status === currentStatusFilter);

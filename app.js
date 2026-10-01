@@ -555,9 +555,45 @@ function matchesChannel(ch, channelType) {
 
 function initWalletFilterBar() {
   const filterBtns = document.querySelectorAll('.gateway-filter-btn');
-  const channelFilterBtns = document.querySelectorAll('.channel-filter-btn');
-  const statusFilterBtns = document.querySelectorAll('.status-filter-btn');
+  const channelFilterBtns = document.querySelectorAll('#filterChannelOptions .filter-pill-opt');
+  const statusFilterBtns = document.querySelectorAll('#filterStatusOptions .filter-pill-opt');
   const searchInput = document.getElementById('walletSearchInput');
+  const btnFilterToggle = document.getElementById('btnFilterToggle');
+  const filterDropdownCard = document.getElementById('filterDropdownCard');
+  const btnFilterReset = document.getElementById('btnFilterReset');
+
+  // Toggle filter dropdown card from Filter Icon button
+  if (btnFilterToggle && filterDropdownCard) {
+    btnFilterToggle.addEventListener('click', (e) => {
+      e.stopPropagation();
+      filterDropdownCard.classList.toggle('show');
+      btnFilterToggle.classList.toggle('is-active', filterDropdownCard.classList.contains('show'));
+    });
+
+    // Close popover when clicking anywhere outside
+    document.addEventListener('click', (e) => {
+      if (!e.target.closest('#filterMenuWrapper')) {
+        filterDropdownCard.classList.remove('show');
+        if (btnFilterToggle) btnFilterToggle.classList.remove('is-active');
+      }
+    });
+
+    filterDropdownCard.addEventListener('click', (e) => {
+      e.stopPropagation();
+    });
+  }
+
+  // Reset button inside Filter Popover
+  if (btnFilterReset) {
+    btnFilterReset.addEventListener('click', () => {
+      currentStatusFilter = 'all';
+      currentChannelFilter = 'all';
+      statusFilterBtns.forEach(b => b.classList.toggle('active', b.getAttribute('data-status-filter') === 'all'));
+      channelFilterBtns.forEach(b => b.classList.toggle('active', b.getAttribute('data-channel-filter') === 'all'));
+      renderWalletTable();
+      showToast('Filters reset', 'info');
+    });
+  }
 
   // Gateway filter buttons
   filterBtns.forEach(btn => {
@@ -570,7 +606,7 @@ function initWalletFilterBar() {
     });
   });
 
-  // Channel filter buttons (All, Cashout, Send Money, Payment)
+  // Channel filter buttons (inside popover: Cashout, Send Money, Payment)
   channelFilterBtns.forEach(btn => {
     btn.addEventListener('click', () => {
       const filter = btn.getAttribute('data-channel-filter');
@@ -581,7 +617,7 @@ function initWalletFilterBar() {
     });
   });
 
-  // Status filter buttons (All, Active, Deactive)
+  // Status filter buttons (inside popover: All, Active, Deactive)
   statusFilterBtns.forEach(btn => {
     btn.addEventListener('click', () => {
       const filter = btn.getAttribute('data-status-filter');
@@ -648,6 +684,30 @@ function renderWalletTable() {
   if (elStatusAll) elStatusAll.textContent = countStatusAll;
   if (elStatusActive) elStatusActive.textContent = countStatusActive;
   if (elStatusDeactive) elStatusDeactive.textContent = countStatusDeactive;
+
+  // Update Filter Active Dot & Popover Summary
+  const hasActiveFilters = currentStatusFilter !== 'all' || currentChannelFilter !== 'all';
+  const filterActiveDot = document.getElementById('filterActiveDot');
+  const btnFilterToggleEl = document.getElementById('btnFilterToggle');
+  const filterActiveSummary = document.getElementById('filterActiveSummary');
+
+  if (filterActiveDot) {
+    filterActiveDot.style.display = hasActiveFilters ? 'inline-block' : 'none';
+  }
+  if (btnFilterToggleEl) {
+    btnFilterToggleEl.classList.toggle('has-active-filters', hasActiveFilters);
+  }
+  if (filterActiveSummary) {
+    const summaryParts = [];
+    if (currentStatusFilter !== 'all') summaryParts.push(`Status: ${currentStatusFilter}`);
+    if (currentChannelFilter !== 'all') {
+      const chName = currentChannelFilter === 'Send Many' ? 'Send Money' : currentChannelFilter;
+      summaryParts.push(`Channel: ${chName}`);
+    }
+    filterActiveSummary.textContent = summaryParts.length > 0 
+      ? `Active: ${summaryParts.join(' • ')}` 
+      : 'Showing all channels';
+  }
 
   // Filter channels according to active gateway, channel, status filter, and search term
   let filtered = currentGatewayFilter === 'all'

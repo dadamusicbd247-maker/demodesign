@@ -972,130 +972,182 @@ body.dark-mode .theme-toggle-btn {
   color: #ffffff;
 }
 
-/* Filter Container Rows & Groups */
-.filter-controls-row {
+/* Right-side tools: Filter Icon Button & Quick Search */
+.filter-right-tools {
   display: flex;
   align-items: center;
-  gap: 16px;
-  flex-wrap: wrap;
-  width: 100%;
+  gap: 12px;
+  position: relative;
 }
 
-.secondary-filter-row {
-  margin-top: 10px;
-  justify-content: space-between;
+.filter-menu-wrapper {
+  position: relative;
+  display: inline-block;
 }
 
-.filter-group-wrap {
+.btn-filter-icon {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  flex-wrap: wrap;
+  gap: 6px;
+  padding: 7px 14px;
+  background-color: #ffffff;
+  border: 1.5px solid #cbd5e1;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #334155;
+  cursor: pointer;
+  outline: none;
+  font-family: inherit;
+  transition: all 0.15s ease;
+  position: relative;
+  user-select: none;
 }
 
-.filter-group-label {
+.btn-filter-icon:hover {
+  background-color: #f8fafc;
+  border-color: #94a3b8;
+  color: #0f172a;
+}
+
+.btn-filter-icon.is-active,
+.btn-filter-icon.has-active-filters {
+  background-color: #eff6ff;
+  border-color: #2563eb;
+  color: #2563eb;
+}
+
+.filter-active-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background-color: #2563eb;
+  display: inline-block;
+}
+
+/* Filter Dropdown Popover Card */
+.filter-dropdown-card {
+  position: absolute;
+  right: 0;
+  top: calc(100% + 8px);
+  width: 320px;
+  background: #ffffff;
+  border: 1px solid #cbd5e1;
+  border-radius: 12px;
+  box-shadow: 0 12px 30px -4px rgba(15, 23, 42, 0.18), 0 4px 10px -2px rgba(15, 23, 42, 0.08);
+  padding: 16px;
+  z-index: 1000;
+  display: none;
+}
+
+.filter-dropdown-card.show {
+  display: block;
+  animation: filterFadeIn 0.16s ease forwards;
+}
+
+@keyframes filterFadeIn {
+  from { opacity: 0; transform: translateY(-4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.filter-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.filter-card-title {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.btn-filter-reset {
+  background: transparent;
+  border: none;
   font-size: 11.5px;
+  font-weight: 600;
+  color: #2563eb;
+  cursor: pointer;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+.btn-filter-reset:hover {
+  background: #eff6ff;
+  text-decoration: underline;
+}
+
+.filter-card-section {
+  margin-bottom: 14px;
+}
+
+.filter-section-title {
+  font-size: 11px;
   font-weight: 700;
   color: #64748b;
   text-transform: uppercase;
   letter-spacing: 0.5px;
+  margin-bottom: 8px;
 }
 
-.wallet-channel-filter-bar {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  background: #f1f5f9;
-  padding: 4px;
-  border-radius: 9px;
-  border: 1px solid #e2e8f0;
-}
-
-.channel-filter-btn {
-  display: inline-flex;
-  align-items: center;
+.filter-pill-options {
+  display: flex;
+  flex-wrap: wrap;
   gap: 6px;
-  padding: 6px 13px;
-  font-size: 12.5px;
-  font-weight: 500;
-  color: #64748b;
-  background: transparent;
-  border: none;
+}
+
+.filter-pill-opt {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 10px;
+  background: #f1f5f9;
+  border: 1px solid #e2e8f0;
   border-radius: 6px;
+  font-size: 12px;
+  font-weight: 500;
+  color: #475569;
   cursor: pointer;
-  transition: all 0.18s ease;
+  transition: all 0.15s ease;
   user-select: none;
 }
 
-.channel-filter-btn:hover {
+.filter-pill-opt:hover {
+  background: #e2e8f0;
   color: #1e293b;
-  background: rgba(255, 255, 255, 0.7);
 }
 
-.channel-filter-btn.active {
-  color: #0f172a;
-  font-weight: 600;
-  background: #ffffff;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
-}
-
-.channel-filter-btn.active .filter-count-badge {
-  background: #7c3aed;
+.filter-pill-opt.active {
+  background: #0f172a;
   color: #ffffff;
-}
-
-/* Status Filter Bar (All Status, Active, Deactive) */
-.wallet-status-filter-bar {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  background: #f1f5f9;
-  padding: 4px;
-  border-radius: 9px;
-  border: 1px solid #e2e8f0;
-}
-
-.status-filter-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 6px 12px;
-  font-size: 12.5px;
-  font-weight: 500;
-  color: #64748b;
-  background: transparent;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  transition: all 0.18s ease;
-  user-select: none;
-}
-
-.status-filter-btn:hover {
-  color: #1e293b;
-  background: rgba(255, 255, 255, 0.7);
-}
-
-.status-filter-btn.active {
-  color: #0f172a;
+  border-color: #0f172a;
   font-weight: 600;
-  background: #ffffff;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
 }
 
-.status-filter-btn.active.btn-filter-deactive {
-  color: #b91c1c;
-  background: #fee2e2;
-  border: 1px solid #fca5a5;
-}
-
-.status-filter-btn.active.btn-filter-deactive .filter-count-badge {
+.filter-pill-opt.active.opt-deactive {
   background: #ef4444;
+  border-color: #ef4444;
   color: #ffffff;
 }
 
-.status-filter-btn.active:not(.btn-filter-deactive) .filter-count-badge {
-  background: #16a34a;
+.opt-count-badge {
+  font-size: 10.5px;
+  font-weight: 700;
+  padding: 1px 5px;
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.06);
+  color: inherit;
+}
+
+.filter-pill-opt.active .opt-count-badge {
+  background: rgba(255, 255, 255, 0.25);
   color: #ffffff;
 }
 
@@ -1104,6 +1156,14 @@ body.dark-mode .theme-toggle-btn {
   height: 7px;
   border-radius: 50%;
   display: inline-block;
+}
+
+.filter-card-footer {
+  padding-top: 8px;
+  border-top: 1px solid #f1f5f9;
+  font-size: 11.5px;
+  color: #64748b;
+  text-align: right;
 }
 
 .wallet-filter-search {

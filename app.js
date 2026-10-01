@@ -519,6 +519,7 @@ function initWithdrawHandler() {
 
 // --- Wallet Filter Bar State & Logic ---
 let currentGatewayFilter = 'all'; // 'all', 'Manual Pay', 'Sorolpay', 'Crypto'
+let currentStatusFilter = 'all';  // 'all', 'Active', 'Deactive'
 let currentSearchQuery = '';
 
 function matchesGateway(ch, gateway) {
@@ -538,13 +539,26 @@ function matchesGateway(ch, gateway) {
 
 function initWalletFilterBar() {
   const filterBtns = document.querySelectorAll('.gateway-filter-btn');
+  const statusFilterBtns = document.querySelectorAll('.status-filter-btn');
   const searchInput = document.getElementById('walletSearchInput');
 
+  // Gateway filter buttons
   filterBtns.forEach(btn => {
     btn.addEventListener('click', () => {
       const filter = btn.getAttribute('data-filter');
       currentGatewayFilter = filter;
       filterBtns.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      renderWalletTable();
+    });
+  });
+
+  // Status filter buttons (All, Active, Deactive)
+  statusFilterBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const filter = btn.getAttribute('data-status-filter');
+      currentStatusFilter = filter;
+      statusFilterBtns.forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
       renderWalletTable();
     });
@@ -578,10 +592,27 @@ function renderWalletTable() {
   if (elSorolpay) elSorolpay.textContent = countSorolpay;
   if (elCrypto) elCrypto.textContent = countCrypto;
 
-  // Filter channels according to active gateway option and search term
+  // Update Status Count Badges (All Status, Active, Deactive)
+  const countStatusAll = channelsData.length;
+  const countStatusActive = channelsData.filter(c => c.status === 'Active').length;
+  const countStatusDeactive = channelsData.filter(c => c.status === 'Deactive').length;
+
+  const elStatusAll = document.getElementById('count-status-all');
+  const elStatusActive = document.getElementById('count-status-active');
+  const elStatusDeactive = document.getElementById('count-status-deactive');
+
+  if (elStatusAll) elStatusAll.textContent = countStatusAll;
+  if (elStatusActive) elStatusActive.textContent = countStatusActive;
+  if (elStatusDeactive) elStatusDeactive.textContent = countStatusDeactive;
+
+  // Filter channels according to active gateway, status filter, and search term
   let filtered = currentGatewayFilter === 'all'
     ? channelsData
     : channelsData.filter(c => matchesGateway(c, currentGatewayFilter));
+
+  if (currentStatusFilter !== 'all') {
+    filtered = filtered.filter(c => c.status === currentStatusFilter);
+  }
 
   if (currentSearchQuery) {
     const q = currentSearchQuery.toLowerCase();
@@ -599,8 +630,15 @@ function renderWalletTable() {
   }
 
   if (filtered.length === 0) {
-    const filterText = currentGatewayFilter === 'all' ? '' : ` "${currentGatewayFilter}"`;
-    walletListBody.innerHTML = `<tr><td colspan="6" style="text-align:center; padding: 36px 20px; color: var(--text-muted); font-size: 13.5px;"><svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="#94a3b8" stroke-width="1.8" style="margin-bottom: 8px; display: block; margin-left: auto; margin-right: auto;"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>${filterText} গেটওয়ে বা সার্চ ফিল্টারে কোনো চ্যানেল পাওয়া যায়নি।</td></tr>`;
+    let msg = 'কোনো চ্যানেল পাওয়া যায়নি।';
+    if (currentStatusFilter === 'Deactive') {
+      msg = 'কোনো Deactive চ্যানেল নেই। সব চ্যানেল একটিভ রয়েছে।';
+    } else if (currentStatusFilter === 'Active') {
+      msg = 'কোনো Active চ্যানেল পাওয়া যায়নি।';
+    } else if (currentGatewayFilter !== 'all') {
+      msg = `"${currentGatewayFilter}" গেটওয়েতে কোনো চ্যানেল পাওয়া যায়নি।`;
+    }
+    walletListBody.innerHTML = `<tr><td colspan="6" style="text-align:center; padding: 36px 20px; color: var(--text-muted); font-size: 13.5px;"><svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="#94a3b8" stroke-width="1.8" style="margin-bottom: 8px; display: block; margin-left: auto; margin-right: auto;"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>${msg}</td></tr>`;
     return;
   }
 

@@ -972,6 +972,75 @@ body.dark-mode .theme-toggle-btn {
   color: #ffffff;
 }
 
+/* Status Filter Bar (All Status, Active, Deactive) */
+.filter-left-group {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.wallet-status-filter-bar {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: #f1f5f9;
+  padding: 4px;
+  border-radius: 9px;
+  border: 1px solid #e2e8f0;
+}
+
+.status-filter-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  font-size: 12.5px;
+  font-weight: 500;
+  color: #64748b;
+  background: transparent;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.18s ease;
+  user-select: none;
+}
+
+.status-filter-btn:hover {
+  color: #1e293b;
+  background: rgba(255, 255, 255, 0.7);
+}
+
+.status-filter-btn.active {
+  color: #0f172a;
+  font-weight: 600;
+  background: #ffffff;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+}
+
+.status-filter-btn.active.btn-filter-deactive {
+  color: #b91c1c;
+  background: #fee2e2;
+  border: 1px solid #fca5a5;
+}
+
+.status-filter-btn.active.btn-filter-deactive .filter-count-badge {
+  background: #ef4444;
+  color: #ffffff;
+}
+
+.status-filter-btn.active:not(.btn-filter-deactive) .filter-count-badge {
+  background: #16a34a;
+  color: #ffffff;
+}
+
+.status-dot-mini {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
 .wallet-filter-search {
   position: relative;
   min-width: 240px;
